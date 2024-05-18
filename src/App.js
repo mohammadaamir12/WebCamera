@@ -79,6 +79,7 @@ function App() {
         // console.log('Image upload successful:', response.data);
       }).catch(error => {
         console.error('Error uploading image:', error);
+        toast('Token expired')
       });
 
     }
