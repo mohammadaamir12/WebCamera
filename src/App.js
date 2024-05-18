@@ -95,7 +95,7 @@ function App() {
     else {
       toast("Submitted");
       setShowFields(false)
-      setUrl('')
+      setUrl(null)
       setName('')
       setCustomerId('')
       setCustomerType('')
@@ -105,103 +105,106 @@ function App() {
 
   return (
     <>
-      <div className="container text-center">
-        <h1 className="mb-4">Take Your Selfie</h1>
+    <div className="container">
+      <h1 className="mb-4">Take Your Selfie</h1>
 
-        <div className="row justify-content-center mb-3">
-          <div className="col-auto">
-            <Webcam
-              audio={false}
-              ref={webCamRef}
-              screenshotFormat="image/jpeg"
-              videoConstraints={videoConstraints}
-              onUserMedia={onUsermedia}
-              mirrored={true}
-              className="img-fluid"
-            />
-          </div>
-        </div>
-
-        <div className="row justify-content-center mb-3">
-          <div className="col-auto">
-            <button className="btn btn-primary mr-2" onClick={capturePhoto}>Capture</button>
-            <button className="btn btn-secondary ml-2" onClick={() => setUrl(null)}>Refresh</button>
-            <ToastContainer />
-          </div>
-        </div>
-
-        {url && (
-          <div className="row justify-content-center mb-3">
-            <div className="col-auto">
-              <img src={url} alt='Screenshot' className="img-fluid" />
+      <div className="row ">
+        <div className="col-md-6 ">
+          <div className="row">
+            <div className="col-auto" style={{width:'70%',height:'80%'}}>
+              <Webcam
+                style={{ width: '100%', height: '100%',backgroundColor:'#000' }}
+                audio={false}
+                ref={webCamRef}
+                screenshotFormat="image/jpeg"
+                videoConstraints={videoConstraints}
+                onUserMedia={onUsermedia}
+                mirrored={true}
+              />
             </div>
           </div>
-        )}
-        {console.log(url)}
-        {showFields && (
-          <div className="row justify-content-center">
-            <div className="col-md-6">
-              <div className="form-container mb-5">
-                <h2 className="text-center mb-3">Provide Customer Information</h2>
-                <form onSubmit={handleSubmit}>
-                  <div className="form-group">
-                    <label htmlFor="name">Name:</label>
-                    <input
-                      type="text"
-                      id="name"
-                      name="name"
-                      className="form-control"
-                      value={name}
-                      onChange={(e) => setName(e.target.value)}
-                    />
-                    {nameError && <div className="text-danger">{nameError}</div>}
-                  </div>
 
-                  <div className="form-group">
-                    <label htmlFor="customerId">Customer ID:</label>
-                    <input
-                      type="text"
-                      id="customerId"
-                      name="customerId"
-                      className="form-control"
-                      value={customerId}
-                      onChange={(e) => setCustomerId(e.target.value)}
-                    />
-                  </div>
+          <div className="row">
+            <div className="col">
+              <button className="btn btn-primary mr-3" onClick={capturePhoto}>Capture</button>
+              <button className="btn btn-secondary" onClick={() => setUrl(null)}>Refresh</button>
+            </div>
+          </div>
 
-                  <div className="form-group">
-                    <label htmlFor="customerType">Customer Type:</label>
-                    <input
-                      type="text"
-                      id="customerType"
-                      name="customerType"
-                      className="form-control"
-                      value={customerType}
-                      onChange={(e) => setCustomerType(e.target.value)}
-                    />
-                  </div>
-
-                  <div className="text-center">
-                    <button type="submit" className="btn btn-primary mt-4">
-
-                      Submit
-                    </button>
-                  </div>
-                </form>
+          {url && (
+            <div className="row mt-3">
+              <div className="col">
+                <img src={url} alt="Screenshot" className="col-auto" style={{width:'60%',height:'80%'}} />
               </div>
             </div>
-          </div>
-        )}
+          )}
+        </div>
 
-        {showCustomer && (
-          <div className="mt-3">
-            <h2>Customer Details</h2>
-            <p>Name:{name} </p>
-            <p>Customer ID:{customerId} </p>
-            <p>Customer Type:{customerType} </p>
-          </div>
-        )}
+        <div className="col-md-6">
+          {showFields && (
+            <div className="form-container mb-5">
+              <h2 className="mb-3">Provide Customer Information</h2>
+              <form onSubmit={handleSubmit}>
+                <div className="form-group">
+                  <label htmlFor="name">Name:</label>
+                  <input
+                    type="text"
+                    id="name"
+                    name="name"
+                    className="form-control"
+                    value={name}
+                    onChange={(e) => setName(e.target.value)}
+                    required
+                  />
+                </div>
+
+                <div className="form-group">
+                  <label htmlFor="customerId">Customer ID:</label>
+                  <input
+                    type="text"
+                    id="customerId"
+                    name="customerId"
+                    className="form-control"
+                    value={customerId}
+                    onChange={(e) => setCustomerId(e.target.value)}
+                  />
+                </div>
+
+                <div className="form-group">
+                  <label htmlFor="customerType">Customer Type:</label>
+                  <input
+                    type="text"
+                    id="customerType"
+                    name="customerType"
+                    className="form-control"
+                    value={customerType}
+                    onChange={(e) => setCustomerType(e.target.value)}
+                  />
+                </div>
+
+                <div className="text-center">
+                  <button type="submit" className="btn btn-primary mt-4">
+                    Submit
+                  </button>
+                </div>
+              </form>
+            </div>
+          )}
+
+          {showCustomer && (
+            <div className="mt-3">
+              <h2>Customer Details</h2>
+              <p>Name: {name}</p>
+              <p>Customer ID: {customerId}</p>
+              <p>Customer Type: {customerType}</p>
+            </div>
+          )}
+        </div>
       </div>
+      <ToastContainer />
+    </div>
+
+
     </>
 
 
