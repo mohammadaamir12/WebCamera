@@ -1,15 +1,15 @@
 {
   "files": {
     "main.css": "/WebCamera/static/css/main.81eec848.css",
-    "main.js": "/WebCamera/static/js/main.e858ddab.js",
+    "main.js": "/WebCamera/static/js/main.9ccb12ac.js",
     "static/js/453.86e70f3a.chunk.js": "/WebCamera/static/js/453.86e70f3a.chunk.js",
     "index.html": "/WebCamera/index.html",
     "main.81eec848.css.map": "/WebCamera/static/css/main.81eec848.css.map",
-    "main.e858ddab.js.map": "/WebCamera/static/js/main.e858ddab.js.map",
+    "main.9ccb12ac.js.map": "/WebCamera/static/js/main.9ccb12ac.js.map",
     "453.86e70f3a.chunk.js.map": "/WebCamera/static/js/453.86e70f3a.chunk.js.map"
   },
   "entrypoints": [
     "static/css/main.81eec848.css",
-    "static/js/main.e858ddab.js"
+    "static/js/main.9ccb12ac.js"
   ]
 }
