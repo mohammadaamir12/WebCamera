@@ -1,13 +1,18 @@
-
 import '../App.css'
 import React, { useState } from 'react';
 import axios from 'axios';
+import { LOGINAPI, VALIDATEAPI } from '../config/config'
 import { ToastContainer, toast } from 'react-toastify';
+import { useNavigate } from "react-router-dom";
 
 export default function Auth() {
+    const navigate = useNavigate();
     const [number, setNumber] = useState('');
     const [showOtp, setShowOtp] = useState(false);
     const [otp, setOtp] = useState('')
+    const [session,setSession]=useState('')
+    const [userId,setUserId]=useState('')
+    const [loading, setLoading] = useState(false); 
 
     const handleNumberChange = (e) => {
         setNumber(e.target.value);
@@ -21,49 +26,65 @@ export default function Auth() {
     const handleNumberSubmit = (e) => {
         e.preventDefault();
         if (number != '') {
-            axios.post('https://4wex2d2cz0.execute-api.ap-south-1.amazonaws.com/default/lambda-staff-login', {
+            setLoading(true);
+            axios.post(LOGINAPI, {
                 phone_number: number,
-                headers: {
-                    'Content-Type': 'application/json'
-                },
             })
                 .then(function (response) {
-                    toast('Success')
-                    console.log('successful:', response.data);
+                    toast('Successfully Otp sent',response.data.challengeParameters.answer)
+                    setSession(response.data.session)
+                    setUserId(response.data.challengeParameters.USERNAME)
+                    
+                    console.log('Successfully Otp sent:', response.data);
                 })
                 .catch(function (error) {
                     console.error('error', error);
-                    toast('Not')
+                    toast('Failed')
+                }).finally(() => {
+                    setLoading(false); 
                 });
         }
         console.log('Number submitted:', number);
-        // Assuming an API call here to send the number and receive an OTP
+
         setShowOtp(true);
     };
 
     const handleOtpSubmit = (e) => {
         e.preventDefault();
+        setLoading(true);
+        console.log(userId);
+        console.log(session);
+        console.log(otp);
         if (otp != '') {
-            axios.post('https://218j49ra6l.execute-api.ap-south-1.amazonaws.com/default/lambda-staff-login-validate', {
-                phone_number: otp,
-                headers: {
-                    'Content-Type': 'application/json'
-                }
-            })
+            axios.post(VALIDATEAPI, {
+                phone_number:number,
+                session: session,
+                challengeParameters: {
+                    USERNAME:userId,
+                    answer: otp
+                },
+            },{mode:'cors'})
                 .then(function (response) {
+                    setLoading(false);
                     toast('Success')
+                    const token = response.data.idToken;
+                    localStorage.setItem('token', token);
                     console.log('successful:', response.data);
+                    navigate('/Home')
                 })
                 .catch(function (error) {
                     console.error('error', error);
-                    toast('Not')
+                    toast('Failed to verify')
+                    
                 });
         }
     };
 
+    // "homepage": "https://mohammadaamir12.github.io/WebCamera",
 
     return (
         <div className="Auth-form-container">
+        
             <form className="Auth-form" onSubmit={showOtp ? handleOtpSubmit : handleNumberSubmit}>
                 <div className="Auth-form-content">
                     <h3 className="Auth-form-title">Sign In</h3>
@@ -92,6 +113,7 @@ export default function Auth() {
                     <div className="d-grid gap-2 mt-3">
                         <button type="submit" className="btn btn-primary">
                             {showOtp ? 'Submit OTP' : 'Submit Number'}
+                            {loading==true?<div className="loader">Loading...</div>:null}
                         </button>
                     </div>
                     {/* <p className="forgot-password text-right mt-2">
