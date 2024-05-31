@@ -3,10 +3,11 @@ import '../App.css'
 import 'bootstrap/dist/css/bootstrap.min.css'
 import { useCallback, useEffect, useRef, useState } from 'react';
 import axios from 'axios';
-import { defaultHeaders, API_BASE_URL, VACANTSEAT } from '../config/config'
+import { defaultHeaders, API_BASE_URL, VACANTSEAT,bucket,folder,camera_folder,VISITSTART, VALIDATEAPI, LOGINAPI } from '../config/config'
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import Webcam from "react-webcam";
+import {useNavigate} from 'react-router-dom';
 
 const videoConstraints = {
   width: 540,
@@ -14,10 +15,11 @@ const videoConstraints = {
 }
 
 export default function Home() {
+  const navigate=useNavigate();
   const [showFields, setShowFields] = useState(false);
   const [name, setName] = useState('');
   const [nameError, setNameError] = useState(false)
-  const [customerId, setCustomerId] = useState('');
+  const [customerId, setCustomerId] = useState('False');
   const [customerType, setCustomerType] = useState('');
   const [showCustomer, setShowCustomer] = useState(false)
   const [dropdown1, setDropdown1] = useState('');
@@ -30,6 +32,39 @@ export default function Home() {
     vacantSeat()
   }, [])
 
+  setInterval(()=>{
+   const refreshToken=localStorage.getItem('refresh_token');
+   refreshTokens(refreshToken);
+  },3550000);
+
+  const refreshTokens=(refreshToken)=>{
+    const phone=localStorage.getItem('phone_no');
+    axios.post(LOGINAPI, {
+      phone_number:phone,
+      refresh_token:refreshToken,
+  },{mode:'cors'})
+      .then(function (response) {
+          const token = response.data.security_tokens.idToken;
+          const refreshToken=response.data.security_tokens.refreshToken;
+          localStorage.setItem('token', token);
+          localStorage.setItem('refresh_token', refreshToken);
+      })
+      .catch(function (error) {
+          console.error('error', error);
+          toast('Failed to verify')
+          
+      });
+  }
+
+  const logoutPage=()=>{
+  navigate('/')
+  localStorage.removeItem('token')
+  localStorage.removeItem('refresh_token');
+  localStorage.removeItem('branch_id');
+  localStorage.removeItem('property_folder');
+  localStorage.removeItem('phone_no');
+  localStorage.removeItem('image_path');
+  }
 
   // const containerStyle = {
   //   width:'100%',
@@ -76,15 +111,28 @@ export default function Home() {
 
   useEffect(() => {
     if (url) {
+   
       apiDataCall();
     }
   }, [url]);
 
 
   const apiDataCall = () => {
-    console.log("hello")
+    const propertyFolder = localStorage.getItem('property_folder');
     const token = localStorage.getItem('token');
-    console.log("hello",token)
+    console.log("helllooo",propertyFolder,token);
+    function generateRandomString(length) {
+      const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+      let result = '';
+      const charactersLength = characters.length;
+      for (let i = 0; i < length; i++) {
+        result += characters.charAt(Math.floor(Math.random() * charactersLength));
+      }
+      return result;
+    }
+
+    const randomFilename = `Molecule${generateRandomString(7)}.jpg`;
+
     if (url) {
       const binaryString = atob(url.split(',')[1]);
       const len = binaryString.length;
@@ -97,24 +145,29 @@ export default function Home() {
       axios({
         method: 'put',
         url: API_BASE_URL,
-        headers:defaultHeaders,
+        headers:{'Content-Type': 'image/jpeg',
+        'Authorization': `Bearer ${token}`},
         params: {
-          bucket: 'face-mementos',
-          property_folder: 'molecule_club_ifc',
-          qt_folder: 'qt_faces',
-          camera_folder: 'camera_1',
-          filename: 'Molecule_Cam1_1.jpg',
+          bucket: bucket,
+          property_folder: propertyFolder,
+          qt_folder: folder,
+          camera_folder: camera_folder,
+          filename: randomFilename,
         },
         data: bytes.buffer,
       }).then(response => {
         if (response.data.message.recognition == 'Person not recognized') {
           console.log('Done', response.data);
+          const path=response.data.message.image_path;
+          localStorage.setItem('image_path',path)
           toast("Image upload successful");
           setShowFields(true)
 
         }
         if (response.data.message.recognition == 'Person recognized') {
           console.log('Done');
+          const path=response.data.message.image_path;
+          localStorage.setItem('image_path',path)
           toast("Image upload successful");
           setShowCustomer(true)
           setName(response.data.message.name)
@@ -132,28 +185,52 @@ export default function Home() {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    if (!name) {
+   const branch= localStorage.getItem('branch_id');
+   const property= localStorage.getItem('property_folder');
+   const image= localStorage.getItem('image_path');
+    if (!name && !customerType && !customerId) {
       setNameError('Name is required');
       return;
     }
     else {
-      toast("Submitted");
-      setShowFields(false)
-      setUrl(null)
-      setName('')
-      setCustomerId('')
-      setCustomerType('')
-      setDropdown1('')
-      setDropdown2('')
+      axios.post(VISITSTART, {
+        
+          branch_id: branch,
+          property_folder: property,
+          customer_id: customerId,
+          customer_name: name,
+          phone: customerType,
+          image_path: image
+      
+    },{mode:'cors'})
+        .then(function (response) {
+            toast('Visit Started')
+            console.log('data',response.data);
+            setShowFields(false)
+            setUrl(null)
+            setName('')
+            setCustomerId('')
+            setCustomerType('')
+            setDropdown1('')
+            setDropdown2('')
+           
+        })
+        .catch(function (error) {
+            console.error('error', error);
+            toast('Failed to verify')
+            
+        });
+     
     }
   }
 
   const vacantSeat = () => {
+    const branch=localStorage.getItem('branch_id');
     axios({
       method: 'get',
       url: VACANTSEAT,
       params: {
-        branch_id: '1',
+        branch_id: branch,
       },
     }).then(response => {
 
@@ -163,6 +240,11 @@ export default function Home() {
       console.log('Error', error);
     });
 
+  }
+
+  const handleRefresh=()=>{
+    setUrl('')
+    setShowFields(false)
   }
 
   return (
@@ -196,7 +278,7 @@ export default function Home() {
                 <button className="btn btn-primary mr-3" style={{ margin: 20 }} onClick={capturePhoto}>
                   Capture
                 </button>
-                <button className="btn btn-secondary" style={{ }} onClick={() => setUrl(null)}>
+                <button className="btn btn-secondary"  onClick={handleRefresh}>
                   Refresh
                 </button>
               </div>
@@ -230,7 +312,7 @@ export default function Home() {
                   </div>
 
                   <div className="form-group">
-                    <label htmlFor="customerId">Customer Type:</label>
+                    <label htmlFor="customerId">Customer Phone:</label>
                     <input
                       type="text"
                       id="customerId"
@@ -288,7 +370,7 @@ export default function Home() {
 
                   <div className="text-center">
                     <button type="submit" className="btn btn-primary mt-4">
-                      Submit
+                      Add Visit
                     </button>
                   </div>
                 </form>
@@ -414,6 +496,7 @@ export default function Home() {
     </div>
     </div>
         </div>
+        <h1 onClick={logoutPage}>Logout</h1>
 
         <ToastContainer />
       </div>
@@ -423,3 +506,5 @@ export default function Home() {
 
   )
 }
+//branch id , property folder ,response=> customer_id,name,phone and image path in api
+//s3://face-mementos/qt_faces/molecule/camera_1/Molecule_1.jpg

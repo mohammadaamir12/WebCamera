@@ -29,12 +29,12 @@ export default function Auth() {
             setLoading(true);
             axios.post(LOGINAPI, {
                 phone_number: number,
+                refresh_token:"False"
             })
                 .then(function (response) {
                     toast('Successfully Otp sent',response.data.challengeParameters.answer)
                     setSession(response.data.session)
                     setUserId(response.data.challengeParameters.USERNAME)
-                    
                     console.log('Successfully Otp sent:', response.data);
                 })
                 .catch(function (error) {
@@ -67,8 +67,17 @@ export default function Auth() {
                 .then(function (response) {
                     setLoading(false);
                     toast('Success')
-                    const token = response.data.idToken;
+                    const token = response.data.security_tokens.idToken;
+                    console.log('token given',token);
+                    const refreshToken=response.data.security_tokens.refreshToken;
+                    const branchId=response.data.details.branchid;
+                    const propertyFolder=response.data.details.property_folder;
+                    const phoneNumber=response.data.details.phone;
                     localStorage.setItem('token', token);
+                    localStorage.setItem('refresh_token', refreshToken);
+                    localStorage.setItem('branch_id', branchId);
+                    localStorage.setItem('property_folder', propertyFolder);
+                    localStorage.setItem('phone_no', phoneNumber);
                     console.log('successful:', response.data);
                     navigate('/Home')
                 })
@@ -102,7 +111,7 @@ export default function Auth() {
                         <div className="form-group mt-3">
                             <label>OTP</label>
                             <input
-                                type="password"
+                                type="text"
                                 className="form-control mt-1"
                                 placeholder="Enter otp here"
                                 value={otp}

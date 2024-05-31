@@ -1,14 +1,18 @@
 
 const API_BASE_URL = 'https://eww5a3ve13.execute-api.ap-south-1.amazonaws.com/default/lambda-upload-image-trigger?bucket=face-mementos&property_folder=molecule_club_ifc&qt_folder=qt_faces&camera_folder=camera_1&filename=Molecule_Cam1_1.jpg';
-const AUTH_TOKEN = 'eyJraWQiOiJmWUpIaDNCdVwvejM2Qk93RGgzTTNDTkxKT2xWY3o0MXIwYVwvYUJcL1V1VVpvPSIsImFsZyI6IlJTMjU2In0.eyJzdWIiOiJjMTAzMmRkYS1jMDMxLTcwZDAtNTUwZS02YzU2Mjk4ZjRjZDEiLCJpc3MiOiJodHRwczpcL1wvY29nbml0by1pZHAuYXAtc291dGgtMS5hbWF6b25hd3MuY29tXC9hcC1zb3V0aC0xX01aZWo2UFloMCIsImNvZ25pdG86dXNlcm5hbWUiOiJjMTAzMmRkYS1jMDMxLTcwZDAtNTUwZS02YzU2Mjk4ZjRjZDEiLCJvcmlnaW5fanRpIjoiYjU5ZGU2NTMtYjBlYS00Yjg1LTlkYTYtNDZiOWFlMzJjMGVlIiwiYXVkIjoiM2ppaW41dWw0cHRjbDg2dWpqZ3NvYWo5dWkiLCJldmVudF9pZCI6ImQ5YTRhMTllLTBiMDQtNDQxOS1hZjhlLTgyMWMzYzg5YTg5ZiIsInRva2VuX3VzZSI6ImlkIiwiYXV0aF90aW1lIjoxNzE2NDg1MTUyLCJwaG9uZV9udW1iZXIiOiIrOTE5NzQxMTE2MDM1IiwiZXhwIjoxNzE2NDg4NzUyLCJpYXQiOjE3MTY0ODUxNTIsImp0aSI6ImQ2ZTQ5MjNjLTY2ZTQtNDNkOC1iZjY3LTk1MTc4ZTI0OGJjMCJ9.i6-E-OKvl910K_5xOYCzcsbqTdG9KieKnDFnA8sbrU5vlJ_jGVizkLKYMaL3HqeYsSRSpoHR7LaZTB3-SgPBINX_fuQlcpYvYgZqnuvUvuF7G52GarEMvz4FKbh9TYV4L67RoeiJdpcdspLM-JVpXINrtyxP9uD9PsjpLpRgx_LQsXNfpPzJ7TYdXZ7jW8O76fpFxehB63YzG4Ftr_zh1HGPGy_VEPvmWS6EHvmzbc2es5DNPAFwI5IekayNKhjlPG0Zf6t5ebSXXKuhI_X5D0uB07ZuUUYuH_w6U4Aqf3KZ_Qi5zOj8NnFmg0uwgBaIURSMCyjMgnpXi0GoM1_1Fw';
 const LOGINAPI='https://4wex2d2cz0.execute-api.ap-south-1.amazonaws.com/default/lambda-staff-login'
 const VALIDATEAPI='https://218j49ra6l.execute-api.ap-south-1.amazonaws.com/default/lambda-staff-login-validate'
 const VACANTSEAT='https://ok1gem39nc.execute-api.ap-south-1.amazonaws.com/default/lambda-getOccupiedVacantTable?branch_id=1'
+const VISITSTART='https://wc1v1xof3j.execute-api.ap-south-1.amazonaws.com/default/post-newVisit-Invoke'
 // header
+const token= localStorage.getItem('token');
+const bucket='face-mementos';
+const folder= 'qt_faces';
+const camera_folder= 'camera_1';
 const defaultHeaders = {
   'Content-Type': 'image/jpeg',
-  'Authorization': `Bearer ${AUTH_TOKEN}`,
+  'Authorization': `Bearer ${token}`,
 };
 
 
-export { API_BASE_URL, defaultHeaders,LOGINAPI,VALIDATEAPI,VACANTSEAT };
+export { API_BASE_URL, defaultHeaders,LOGINAPI,VISITSTART,VALIDATEAPI,VACANTSEAT,bucket,folder,camera_folder };
