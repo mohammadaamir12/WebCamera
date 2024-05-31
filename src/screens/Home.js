@@ -192,7 +192,9 @@ export default function Home() {
       setNameError('Name is required');
       return;
     }
+    
     else {
+      console.log(branch,property,image);
       axios.post(VISITSTART, {
         
           branch_id: branch,
@@ -202,7 +204,11 @@ export default function Home() {
           phone: customerType,
           image_path: image
       
-    },{mode:'cors'})
+    },
+    {
+      headers: { 'Content-Type': 'application/json' },
+      mode: 'cors'
+  })
         .then(function (response) {
             toast('Visit Started')
             console.log('data',response.data);
@@ -322,7 +328,7 @@ export default function Home() {
                       onChange={(e) => setCustomerType(e.target.value)}
                     />
                   </div>
-                  <div className="form-group">
+                  {/* <div className="form-group">
                     <label htmlFor="customerId">Customer ID:</label>
                     <input
                       type="text"
@@ -332,38 +338,7 @@ export default function Home() {
                       value={customerId}
                       onChange={(e) => setCustomerId(e.target.value)}
                     />
-                  </div>
-                  <div style={{ display: 'flex', justifyContent: "space-between" }}>
-                    <div className="form-group" style={{}}>
-                      <label htmlFor="dropdown1">Staff:</label>
-                      <select
-                        id="dropdown1"
-                        name="dropdown1"
-                        className="form-control"
-                        value={dropdown1}
-                        onChange={(e) => setDropdown1(e.target.value)}
-                      >
-                        <option value="">Select an option</option>
-                        <option value="option1">1</option>
-                        <option value="option2">2</option>
-                      </select>
-                    </div>
-
-                    <div className="form-group">
-                      <label htmlFor="dropdown2">Table:</label>
-                      <select
-                        id="dropdown2"
-                        name="dropdown2"
-                        className="form-control"
-                        value={dropdown2}
-                        onChange={(e) => setDropdown2(e.target.value)}
-                      >
-                        <option value="">Select an option</option>
-                        <option value="option1">1</option>
-                        <option value="option2">2</option>
-                      </select>
-                    </div>
-                  </div>
+                  </div> */}
 
 
 
@@ -508,3 +483,22 @@ export default function Home() {
 }
 //branch id , property folder ,response=> customer_id,name,phone and image path in api
 //s3://face-mementos/qt_faces/molecule/camera_1/Molecule_1.jpg
+
+//                  <div style={{ display: 'flex', justifyContent: "space-between" }}>
+//<div className="form-group" style={{}}>
+//<label htmlFor="dropdown1">Staff:</label>
+//<select
+//  id="dropdown1"
+//  name="dropdown1"
+ // className="form-control"
+//  value={dropdown1}
+//  onChange={(e) => setDropdown1(e.target.value)}
+//>
+ // <option value="">Select an option</option>
+ // <option value="option1">1</option>
+ // <option value="option2">2</option>
+//</select>
+//</div>
+
+
+//</div>
