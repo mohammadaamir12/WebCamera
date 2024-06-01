@@ -238,7 +238,7 @@ export default function Home() {
           customer_name: name,
           phone: customerType,
           image_path: image,
-          party_size:people
+          
       
     },
     {
