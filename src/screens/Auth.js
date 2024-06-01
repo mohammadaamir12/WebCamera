@@ -37,7 +37,10 @@ export default function Auth() {
                 refresh_token:"False"
             })
                 .then(function (response) {
-                    toast('Successfully Otp sent',response.data.challengeParameters.answer)
+                    toast('Successfully Otp sent',{
+                        autoClose: 500,
+                        hideProgressBar: true
+                    })
                     setSession(response.data.session)
                     setUserId(response.data.challengeParameters.USERNAME)
                     console.log('Successfully Otp sent:', response.data);

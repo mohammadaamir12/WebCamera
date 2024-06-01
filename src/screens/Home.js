@@ -4,7 +4,7 @@ import 'bootstrap/dist/css/bootstrap.min.css'
 import { useCallback, useEffect, useRef, useState } from 'react';
 import axios from 'axios';
 import { defaultHeaders, API_BASE_URL, VACANTSEAT,bucket,folder,camera_folder,VISITSTART, VALIDATEAPI, LOGINAPI, AFTERVISIT } from '../config/config'
-import { ToastContainer, toast } from 'react-toastify';
+import { Bounce, ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import Webcam from "react-webcam";
 import {useNavigate} from 'react-router-dom';
@@ -580,7 +580,8 @@ export default function Home() {
         </div>
         {/* <h1 onClick={logoutPage}>Logout</h1> */}
 
-        <ToastContainer />
+        <ToastContainer
+        />
       </div>
 
 
