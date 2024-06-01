@@ -47,7 +47,10 @@ export default function Auth() {
                 })
                 .catch(function (error) {
                     console.error('error', error);
-                    toast('Failed')
+                    toast('Failed',{
+                        autoClose: 500,
+                        hideProgressBar: true
+                    })
                 }).finally(() => {
                     setLoading(false); 
                 });
@@ -74,7 +77,10 @@ export default function Auth() {
             },{mode:'cors'})
                 .then(function (response) {
                     setLoading(false);
-                    toast('Success')
+                    toast('Success',{
+                        autoClose: 500,
+                        hideProgressBar: true
+                    })
                     const token = response.data.security_tokens.idToken;
                     console.log('token given',token);
                     const refreshToken=response.data.security_tokens.refreshToken;
@@ -91,7 +97,10 @@ export default function Auth() {
                 })
                 .catch(function (error) {
                     console.error('error', error);
-                    toast('Failed to verify')
+                    toast('Failed to verify',{
+                        autoClose: 500,
+                        hideProgressBar: true
+                    })
                     
                 });
         }

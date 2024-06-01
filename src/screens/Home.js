@@ -87,7 +87,10 @@ export default function Home() {
       })
       .catch(function (error) {
           console.error('error', error);
-          toast('Failed to verify')
+          toast('Failed to verify',{
+            autoClose: 500,
+            hideProgressBar: true
+        })
           
       });
   }
@@ -195,7 +198,10 @@ export default function Home() {
           console.log('Done', response.data);
           const path=response.data.message.image_path;
           localStorage.setItem('image_path',path)
-          toast("Image upload successful");
+          toast("Image upload successful",{
+            autoClose: 500,
+            hideProgressBar: true
+        });
           setShowFields(true)
 
         }
@@ -203,8 +209,11 @@ export default function Home() {
           console.log('Done');
           const path=response.data.message.image_path;
           localStorage.setItem('image_path',path)
-          toast("Image upload successful");
-          setShowCustomer(true)
+          toast("Image recognize successfully",{
+            autoClose: 500,
+            hideProgressBar: true
+        });
+        setShowFields(true)
           setName(response.data.message.name)
           setCustomerId(response.data.message.customer_id)
           setCustomerType(response.data.message.customer_type)
@@ -212,7 +221,10 @@ export default function Home() {
         // console.log('Image upload successful:', response.data);
       }).catch(error => {
         console.error('Error uploading image:', error);
-        toast('Token expired')
+        toast('Token expired',{
+          autoClose: 500,
+          hideProgressBar: true
+      })
       });
 
     }
@@ -245,7 +257,10 @@ export default function Home() {
       headers: { 'Content-Type': 'application/json' }
   })
         .then(function (response) {
-            toast('Visit Started')
+            toast('Visit Started',{
+              autoClose: 500,
+              hideProgressBar: true
+          })
             console.log('data',response.data);
             setShowFields(false)
             setShowCustomer(true)
@@ -254,7 +269,10 @@ export default function Home() {
         })
         .catch(function (error) {
             console.error('error', error);
-            toast('Failed to verify')
+            toast('Failed to verify',{
+              autoClose: 500,
+              hideProgressBar: true
+          })
             
         });
      
@@ -302,12 +320,19 @@ export default function Home() {
     headers: { 'Content-Type': 'application/json' }
 })
       .then(function (response) {
-          toast('Success',response.data)
+          toast('Success',{
+            autoClose: 500,
+            hideProgressBar: true
+        })
+        console.log(response.data);
          
       })
       .catch(function (error) {
           console.error('error', error);
-          toast('Failed')
+          toast('Failed',{
+            autoClose: 500,
+            hideProgressBar: true
+        })
       }).finally(() => {
          
       });
