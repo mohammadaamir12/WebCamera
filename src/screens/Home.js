@@ -8,11 +8,46 @@ import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import Webcam from "react-webcam";
 import {useNavigate} from 'react-router-dom';
+import styled from 'styled-components';
 
 const videoConstraints = {
   width: 540,
   facingMode: 'environment'
 }
+
+const heading1 = styled.h2`
+  font-family: 'Roboto', sans-serif;
+  font-weight: 700;
+  color: #007bff;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+  letter-spacing: 1px;
+  margin-bottom: 0.5rem;
+  margin-top: 0.5rem;
+
+  @media (max-width: 768px) {
+    font-size: 1.5rem;
+    text-align: center;
+  }
+
+  @media (min-width: 769px) {
+    font-size: 2rem;
+    text-align: left;
+  }
+`;
+
+const heading2 = styled.h2`
+ 
+
+  @media (max-width: 768px) {
+    font-size: 1.5rem;
+    text-align: center;
+  }
+
+  @media (min-width: 769px) {
+    font-size: 2rem;
+    text-align: left;
+  }
+`;
 
 export default function Home() {
   const navigate=useNavigate();
@@ -103,19 +138,18 @@ export default function Home() {
   const capturePhoto = useCallback(async () => {
     const imageSrc = webCamRef.current.getScreenshot()
     setUrl(imageSrc)
-    apiDataCall()
   }, [webCamRef]);
 
   const onUsermedia = (e) => {
     console.log(e);
   }
 
-  useEffect(() => {
-    if (url) {
+  // useEffect(() => {
+  //   if (url) {
    
-      apiDataCall();
-    }
-  }, [url]);
+  //     apiDataCall();
+  //   }
+  // }, [url]);
 
 
   const apiDataCall = () => {
@@ -203,7 +237,8 @@ export default function Home() {
           customer_id: customerId,
           customer_name: name,
           phone: customerType,
-          image_path: image
+          image_path: image,
+          party_size:people
       
     },
     {
@@ -245,9 +280,7 @@ export default function Home() {
   }
 
   const handleRefresh=()=>{
-    setUrl('')
-    setShowFields(false)
-    setShowCustomer(false)
+    apiDataCall()
   }
   const onSkip=()=>{
     setShowCustomer(false)
@@ -290,9 +323,11 @@ export default function Home() {
           textShadow: '2px 2px 4px rgba(0, 0, 0, 0.1)',
           letterSpacing: '1px'
         }}>Take Your Photo</h2>
+         {/* <heading2 className="mb-2 mt-2"
+        >Smile Please</heading2> */}
 
         <div className="row">
-          <div className="col-md-4">
+          <div className="col-md-3">
             <div className="row">
               <div className="col-auto">
                 <Webcam
@@ -311,24 +346,29 @@ export default function Home() {
                 <button className="btn btn-primary mr-3" style={{ margin: 20 }} onClick={capturePhoto}>
                   Capture
                 </button>
-                <button className="btn btn-secondary"  onClick={handleRefresh}>
-                  Refresh
+                <button className="btn btn-primary"  onClick={handleRefresh}>
+                  Submit
                 </button>
               </div>
             </div>
           </div>
           {url && (
-            <div className="col-md-2 " style={{ marginTop: '7%',}}>
+            <div className="col-md-2 " style={{width:'20%',height:'20%',marginTop:'2.5%', }}>
               <img src={url} alt="Screenshot" className="img-fluid" style={{borderRadius:30}} />
             </div>
           )}
-          <div className="col-md-1 d-flex align-items-center ">
+          <div className="col-md-1 " style={{}}>
             <div style={{ borderLeft: '1px solid #000', height: '100%', margin: '0 auto' }}></div>
           </div>
+          
+       
+          
+  
+ {/* <div className="col-md-1" style={{ borderLeft: '1px solid #000', height: '100%', margin: '0 auto' }}></div> */}
 
           <div className="col-md-4 offset-md-1">
             {showFields && (
-              <div className="form-container mb-5">
+              <div className="form-container md-5" >
                 <h2 className="mb-3">Provide Customer Information</h2>
                 <form onSubmit={handleSubmit}>
                   <div className="form-group">
@@ -380,8 +420,8 @@ export default function Home() {
             )}
 
             {showCustomer && (
-                        <div>
-                        <div style={{ display: 'flex', justifyContent: "space-between"}}>
+                        <div style={{}}>
+                        <div style={{ display: 'flex', justifyContent: "space-between",}}>
                           <div className="form-group">
                             <label htmlFor="dropdown1">Staff:</label>
                             <select
@@ -524,7 +564,7 @@ export default function Home() {
           alignItems: 'center',
           border: '1px solid #ccc',
           borderRadius: '5px',
-          backgroundColor:table.table_status=='true'?'#cfdae8':'#fc5f51',
+          backgroundColor:table.table_status=='true'?'#a9f5bd':'#fc5f51',
           fontSize: '20px',}}>
            <p style={{margin:'0',
                       fontWeight: 'bold',
@@ -538,7 +578,7 @@ export default function Home() {
     </div>
     </div>
         </div>
-        <h1 onClick={logoutPage}>Logout</h1>
+        {/* <h1 onClick={logoutPage}>Logout</h1> */}
 
         <ToastContainer />
       </div>

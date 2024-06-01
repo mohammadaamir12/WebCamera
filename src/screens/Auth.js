@@ -4,6 +4,9 @@ import axios from 'axios';
 import { LOGINAPI, VALIDATEAPI } from '../config/config'
 import { ToastContainer, toast } from 'react-toastify';
 import { useNavigate } from "react-router-dom";
+import PhoneInput from 'react-phone-input-2'
+import 'react-phone-input-2/lib/style.css'
+
 
 export default function Auth() {
     const navigate = useNavigate();
@@ -14,8 +17,9 @@ export default function Auth() {
     const [userId,setUserId]=useState('')
     const [loading, setLoading] = useState(false); 
 
-    const handleNumberChange = (e) => {
-        setNumber(e.target.value);
+    const handleNumberChange = (value) => {
+        const formattedValue = `+${value}`;
+        setNumber(formattedValue);
 
     };
     const handleOtpChange = (e) => {
@@ -25,6 +29,7 @@ export default function Auth() {
 
     const handleNumberSubmit = (e) => {
         e.preventDefault();
+        console.log('i am here numbr',number);
         if (number != '') {
             setLoading(true);
             axios.post(LOGINAPI, {
@@ -99,12 +104,33 @@ export default function Auth() {
                     <h3 className="Auth-form-title">Sign In</h3>
                     <div className="form-group mt-3">
                         <label>Enter Your Number</label>
-                        <input
-                            type="text"
-                            className="form-control mt-1"
+                        <PhoneInput
+                         country={'in'}
+                            // className="form-control mt-1"
                             placeholder="Enter number"
                             value={number}
                             onChange={handleNumberChange}
+                            inputProps={{
+                                
+                                required: true,
+                               
+                              }}
+                              containerStyle={{
+                                width: '100%',
+                              }}
+                              inputStyle={{
+                                width: '100%',
+                                height: '40px',
+                                fontSize: '16px',
+                                borderColor: '#ced4da',
+                                borderRadius: '.25rem',
+                                paddingLeft: '40px', // Adjust according to your layout
+                              }}
+                              buttonStyle={{
+                                borderRadius: '.25rem 0 0 .25rem',
+                                borderColor: '#ced4da',
+                              }}
+                             
                         />
                     </div>
                     {showOtp && (
