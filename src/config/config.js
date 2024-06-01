@@ -4,6 +4,7 @@ const LOGINAPI='https://4wex2d2cz0.execute-api.ap-south-1.amazonaws.com/default/
 const VALIDATEAPI='https://218j49ra6l.execute-api.ap-south-1.amazonaws.com/default/lambda-staff-login-validate'
 const VACANTSEAT='https://ok1gem39nc.execute-api.ap-south-1.amazonaws.com/default/lambda-getOccupiedVacantTable?branch_id=1'
 const VISITSTART='https://wc1v1xof3j.execute-api.ap-south-1.amazonaws.com/default/post-newVisit-Invoke'
+const AFTERVISIT='https://xh0xkg2tzb.execute-api.ap-south-1.amazonaws.com/default/lambda_postLinkTableStaffVisit'
 // header
 const token= localStorage.getItem('token');
 const bucket='face-mementos';
@@ -15,4 +16,4 @@ const defaultHeaders = {
 };
 
 
-export { API_BASE_URL, defaultHeaders,LOGINAPI,VISITSTART,VALIDATEAPI,VACANTSEAT,bucket,folder,camera_folder };
+export { API_BASE_URL, defaultHeaders,LOGINAPI,VISITSTART,VALIDATEAPI,VACANTSEAT,bucket,folder,camera_folder,AFTERVISIT };

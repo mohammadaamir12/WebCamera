@@ -3,7 +3,7 @@ import '../App.css'
 import 'bootstrap/dist/css/bootstrap.min.css'
 import { useCallback, useEffect, useRef, useState } from 'react';
 import axios from 'axios';
-import { defaultHeaders, API_BASE_URL, VACANTSEAT,bucket,folder,camera_folder,VISITSTART, VALIDATEAPI, LOGINAPI } from '../config/config'
+import { defaultHeaders, API_BASE_URL, VACANTSEAT,bucket,folder,camera_folder,VISITSTART, VALIDATEAPI, LOGINAPI, AFTERVISIT } from '../config/config'
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import Webcam from "react-webcam";
@@ -27,6 +27,7 @@ export default function Home() {
   const webCamRef = useRef(null)
   const [url, setUrl] = useState(null)
   const [table, settable] = useState([])
+  const [people,setPeople]=useState('')
 
   useEffect(() => {
     vacantSeat()
@@ -206,19 +207,14 @@ export default function Home() {
       
     },
     {
-      headers: { 'Content-Type': 'application/json' },
-      mode: 'cors'
+      headers: { 'Content-Type': 'application/json' }
   })
         .then(function (response) {
             toast('Visit Started')
             console.log('data',response.data);
             setShowFields(false)
-            setUrl(null)
-            setName('')
-            setCustomerId('')
-            setCustomerType('')
-            setDropdown1('')
-            setDropdown2('')
+            setShowCustomer(true)
+
            
         })
         .catch(function (error) {
@@ -251,6 +247,37 @@ export default function Home() {
   const handleRefresh=()=>{
     setUrl('')
     setShowFields(false)
+    setShowCustomer(false)
+  }
+  const onSkip=()=>{
+    setShowCustomer(false)
+    setShowFields(false)
+    setName('')
+    setCustomerId('False')
+    setCustomerType('')
+    setUrl('')
+    setDropdown1('')
+    setDropdown2('')
+  }
+
+  const afterVisit=()=>{
+    axios.post(AFTERVISIT, {
+      "staff_id": "server1",
+      "table_id": '1',
+      "visit_id":'1',
+  },{
+    headers: { 'Content-Type': 'application/json' }
+})
+      .then(function (response) {
+          toast('Success',response.data)
+         
+      })
+      .catch(function (error) {
+          console.error('error', error);
+          toast('Failed')
+      }).finally(() => {
+         
+      });
   }
 
   return (
@@ -328,17 +355,17 @@ export default function Home() {
                       onChange={(e) => setCustomerType(e.target.value)}
                     />
                   </div>
-                  {/* <div className="form-group">
-                    <label htmlFor="customerId">Customer ID:</label>
+                  <div className="form-group">
+                    <label htmlFor="customerId">Number of People:</label>
                     <input
                       type="text"
                       id="customerId"
                       name="customerId"
                       className="form-control"
-                      value={customerId}
-                      onChange={(e) => setCustomerId(e.target.value)}
+                      value={people}
+                      onChange={(e) => setPeople(e.target.value)}
                     />
-                  </div> */}
+                  </div>
 
 
 
@@ -353,12 +380,52 @@ export default function Home() {
             )}
 
             {showCustomer && (
-              <div className="mt-3">
-                <h2>Customer Details</h2>
-                <p>Name: {name}</p>
-                <p>Customer ID: {customerId}</p>
-                <p>Customer Type: {customerType}</p>
-              </div>
+                        <div>
+                        <div style={{ display: 'flex', justifyContent: "space-between"}}>
+                          <div className="form-group">
+                            <label htmlFor="dropdown1">Staff:</label>
+                            <select
+                              id="dropdown1"
+                              name="dropdown1"
+                              className="form-control"
+                              value={dropdown1}
+                              onChange={(e) => setDropdown1(e.target.value)}
+                            >
+                              <option value="">Select an option</option>
+                              <option value="option1">1</option>
+                              <option value="option2">2</option>
+                            </select>
+                          </div>
+                      
+                          <div className="form-group">
+                            <label htmlFor="dropdown2">Table:</label>
+                            <select
+                              id="dropdown2"
+                              name="dropdown2"
+                              className="form-control"
+                              value={dropdown2}
+                              onChange={(e) => setDropdown2(e.target.value)}
+                            >
+                              <option value="">Select an option</option>
+                              <option value="option1">1</option>
+                              <option value="option2">2</option>
+                            </select>
+                          </div>
+                        </div>
+                      
+                        <div style={{ display: 'flex', justifyContent: "center", marginTop: '20px' }}>
+                          <div className="text-center">
+                            <button onClick={afterVisit} type="submit" className="btn btn-primary mx-2">
+                              Submit
+                            </button>
+                          </div>
+                          <div className="text-center">
+                            <button onClick={onSkip} type="button" className="btn btn-primary mx-2">
+                              Skip
+                            </button>
+                          </div>
+                        </div>
+                      </div>
             )}
           </div>
 
@@ -484,21 +551,4 @@ export default function Home() {
 //branch id , property folder ,response=> customer_id,name,phone and image path in api
 //s3://face-mementos/qt_faces/molecule/camera_1/Molecule_1.jpg
 
-//                  <div style={{ display: 'flex', justifyContent: "space-between" }}>
-//<div className="form-group" style={{}}>
-//<label htmlFor="dropdown1">Staff:</label>
-//<select
-//  id="dropdown1"
-//  name="dropdown1"
- // className="form-control"
-//  value={dropdown1}
-//  onChange={(e) => setDropdown1(e.target.value)}
-//>
- // <option value="">Select an option</option>
- // <option value="option1">1</option>
- // <option value="option2">2</option>
-//</select>
-//</div>
-
-
-//</div>
+  
