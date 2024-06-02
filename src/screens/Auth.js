@@ -8,7 +8,7 @@ import PhoneInput from 'react-phone-input-2'
 import 'react-phone-input-2/lib/style.css'
 
 
-export default function Auth() {
+export default function Auth({setAuth}) {
     const navigate = useNavigate();
     const [number, setNumber] = useState('');
     const [showOtp, setShowOtp] = useState(false);
@@ -81,6 +81,7 @@ export default function Auth() {
                         autoClose: 500,
                         hideProgressBar: true
                     })
+                    setAuth(true)
                     const token = response.data.security_tokens.idToken;
                     console.log('token given',token);
                     const refreshToken=response.data.security_tokens.refreshToken;

@@ -49,13 +49,14 @@ const heading2 = styled.h2`
   }
 `;
 
-export default function Home() {
+export default function Home({setAuth}) {
   const navigate=useNavigate();
-  const [showFields, setShowFields] = useState(false);
+  const [showFields, setShowFields] = useState(true);
   const [name, setName] = useState('');
   const [nameError, setNameError] = useState(false)
   const [customerId, setCustomerId] = useState('False');
   const [customerType, setCustomerType] = useState('');
+  const [phoneNumber, setPhoneNumber] = useState('');
   const [showCustomer, setShowCustomer] = useState(false)
   const [dropdown1, setDropdown1] = useState('');
   const [dropdown2, setDropdown2] = useState('');
@@ -103,6 +104,7 @@ export default function Home() {
   localStorage.removeItem('property_folder');
   localStorage.removeItem('phone_no');
   localStorage.removeItem('image_path');
+  setAuth(false)
   }
 
   // const containerStyle = {
@@ -217,6 +219,7 @@ export default function Home() {
           setName(response.data.message.name)
           setCustomerId(response.data.message.customer_id)
           setCustomerType(response.data.message.customer_type)
+          setPhoneNumber(response.data.message.phone)
         }
         // console.log('Image upload successful:', response.data);
       }).catch(error => {
@@ -235,8 +238,11 @@ export default function Home() {
    const branch= localStorage.getItem('branch_id');
    const property= localStorage.getItem('property_folder');
    const image= localStorage.getItem('image_path');
-    if (!name && !customerType && !customerId) {
-      setNameError('Name is required');
+    if (!name && !phoneNumber && !customerId && !url) {
+      toast('First Capture Image and Enter details',{
+        autoClose: 500,
+        hideProgressBar: true
+    });
       return;
     }
     
@@ -248,7 +254,7 @@ export default function Home() {
           property_folder: property,
           customer_id: customerId,
           customer_name: name,
-          phone: customerType,
+          phone: phoneNumber,
           image_path: image,
           party_size:people
       
@@ -259,7 +265,10 @@ export default function Home() {
         .then(function (response) {
             toast('Visit Started',{
               autoClose: 500,
-              hideProgressBar: true
+              hideProgressBar: true,
+              style: {
+                backgroundColor: 'green', // Example background color
+            }
           })
             console.log('data',response.data);
             setShowFields(false)
@@ -302,10 +311,10 @@ export default function Home() {
   }
   const onSkip=()=>{
     setShowCustomer(false)
-    setShowFields(false)
+    setShowFields(true)
     setName('')
     setCustomerId('False')
-    setCustomerType('')
+    setPhoneNumber('')
     setUrl('')
     setDropdown1('')
     setDropdown2('')
@@ -338,16 +347,32 @@ export default function Home() {
       });
   }
 
+  const trueCount = table.reduce((acc, staff) => (
+    acc + staff.tables.filter(table => table.table_status === 'true').length
+  ), 0);
+  
+  const falseCount = table.reduce((acc, staff) => (
+    acc + staff.tables.filter(table => table.table_status === 'false').length
+  ), 0);
+
   return (
     <>
       <div className="container">
-        <h2 className="mb-2 mt-2" style={{
+      <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', marginTop: '2%' }}>
+      <h2 style={{fontFamily: "'Roboto', sans-serif",
+          fontWeight: 700,
+          color: '#007bff',
+          textShadow: '2px 2px 4px rgba(0, 0, 0, 0.1)',
+          letterSpacing: '1px'}}>Welcome Reception</h2>
+      <button onClick={logoutPage} style={{ backgroundColor: '#007bff', border: 'none', borderRadius: 10, padding: 4, color: 'white',position:'absolute',right:20 }}>Logout</button>
+    </div>
+        <h3 className="mb-2 mt-2" style={{
           fontFamily: "'Roboto', sans-serif",
           fontWeight: 700,
           color: '#007bff',
           textShadow: '2px 2px 4px rgba(0, 0, 0, 0.1)',
           letterSpacing: '1px'
-        }}>Take Your Photo</h2>
+        }}>Customer Verify</h3>
          {/* <heading2 className="mb-2 mt-2"
         >Smile Please</heading2> */}
 
@@ -395,6 +420,7 @@ export default function Home() {
             {showFields && (
               <div className="form-container md-5" >
                 <h2 className="mb-3">Provide Customer Information</h2>
+                <h3>Customer Type :- {customerType}</h3>
                 <form onSubmit={handleSubmit}>
                   <div className="form-group">
                     <label htmlFor="name">Name:</label>
@@ -416,8 +442,8 @@ export default function Home() {
                       id="customerId"
                       name="customerId"
                       className="form-control"
-                      value={customerType}
-                      onChange={(e) => setCustomerType(e.target.value)}
+                      value={phoneNumber}
+                      onChange={(e) => setPhoneNumber(e.target.value)}
                     />
                   </div>
                   <div className="form-group">
@@ -565,10 +591,15 @@ export default function Home() {
         </div>
       ))}
     </div> */}
+     
      <div style={{ display: 'flex',
     justifyContent: 'center',
     alignItems: 'center',
     height: '50vh', }}>
+      <div style={{display:'flex',flexDirection:'column'}}>
+      <p style={{marginRight:5}}>Booked: {trueCount}</p>
+    <p style={{marginRight:5}}>Vaccant: {falseCount}</p>
+    </div>
     <div style={{ display: 'grid',
     gridTemplateColumns: 'repeat(6, 1fr)',
     marginTop: '10px',
@@ -581,7 +612,9 @@ export default function Home() {
     height: '200px',
     overflowY: 'auto',
     }}>
+      
       {table.map((staff) =>
+       
         staff.tables.map((table) => (
           <div key={table.id} style={{width: '120px',  // Increase size
           height: '80px', // Increase size
@@ -589,17 +622,50 @@ export default function Home() {
           alignItems: 'center',
           border: '1px solid #ccc',
           borderRadius: '5px',
-          backgroundColor:table.table_status=='true'?'#a9f5bd':'#fc5f51',
+          backgroundColor:table.table_status=='true'?'#fc5f51':'#a9f5bd',
           fontSize: '20px',}}>
            <p style={{margin:'0',
                       fontWeight: 'bold',
                       textAlign:'center'}}> {table.table_number}</p>
            <p style={{margin:'0',
                       
-                      textAlign:'center'}}> {table.table_status=='true'?'Vacant':'Booked'}</p>
+                      textAlign:'center'}}> {table.table_status=='true'?'Booked':'Vaccant'}</p>
           </div>
         ))
       )}
+    {/* <div>
+    <p>Total True: {trueCount}</p>
+    <p>Total False: {falseCount}</p>
+    {table.map((staff) => (
+      <div key={staff.staffid}>
+        <div style={{ display: 'flex', flexWrap: 'wrap' }}>
+          {staff.tables.map((table) => (
+            <div
+              key={table.id}
+              style={{
+                width: '120px',
+                height: '80px',
+                justifyContent: 'center',
+                alignItems: 'center',
+                border: '1px solid #ccc',
+                borderRadius: '5px',
+                backgroundColor: table.table_status === 'true' ? '#a9f5bd' : '#fc5f51',
+                fontSize: '20px',
+                margin: '5px',
+              }}
+            >
+              <p style={{ margin: '0', fontWeight: 'bold', textAlign: 'center' }}>
+                {table.table_number}
+              </p>
+              <p style={{ margin: '0', textAlign: 'center' }}>
+                {table.table_status === 'true' ? 'Vacant' : 'Booked'}
+              </p>
+            </div>
+          ))}
+        </div>
+      </div>
+    ))}
+  </div> */}
     </div>
     </div>
         </div>
