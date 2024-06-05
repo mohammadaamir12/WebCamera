@@ -3,11 +3,11 @@ import '../App.css'
 import 'bootstrap/dist/css/bootstrap.min.css'
 import { useCallback, useEffect, useRef, useState } from 'react';
 import axios from 'axios';
-import { defaultHeaders, API_BASE_URL, VACANTSEAT,bucket,folder,camera_folder,VISITSTART, VALIDATEAPI, LOGINAPI, AFTERVISIT } from '../config/config'
+import { defaultHeaders, API_BASE_URL, VACANTSEAT, bucket, folder, camera_folder, VISITSTART, VALIDATEAPI, LOGINAPI, AFTERVISIT } from '../config/config'
 import { Bounce, ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import Webcam from "react-webcam";
-import {useNavigate} from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 
 const videoConstraints = {
@@ -15,42 +15,62 @@ const videoConstraints = {
   facingMode: 'environment'
 }
 
-const heading1 = styled.h2`
-  font-family: 'Roboto', sans-serif;
-  font-weight: 700;
-  color: #007bff;
-  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
-  letter-spacing: 1px;
-  margin-bottom: 0.5rem;
-  margin-top: 0.5rem;
+const Heading1 = styled.h2`
+font-family: 'Roboto', sans-serif;
+font-weight: 700;
+color: #007bff;
+text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+letter-spacing: 0px;
+margin-left: 25%;
+margin-top: 5%;
+width: 100%;
 
-  @media (max-width: 768px) {
-    font-size: 1.5rem;
-    text-align: center;
-  }
-
-  @media (min-width: 769px) {
-    font-size: 2rem;
-    text-align: left;
-  }
+@media only screen and (max-width: 768px) { /* Tablet styles */
+  margin-left: 15%;
+  margin-top: 3%;
+  width: 80%;
+}
 `;
 
 const heading2 = styled.h2`
  
 
-  @media (max-width: 768px) {
-    font-size: 1.5rem;
-    text-align: center;
-  }
-
-  @media (min-width: 769px) {
-    font-size: 2rem;
-    text-align: left;
-  }
+ font-family: 'Roboto', sans-serif;
+font-weight: 700;
+color: #007bff;
+text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+letter-spacing: 1px;
 `;
 
-export default function Home({setAuth}) {
-  const navigate=useNavigate();
+const StyledBox = styled.div`
+background-color: #f8f9fa; /* Set background color */
+border: 1px solid #ced4da; /* Add border */
+border-radius: 10px; /* Add border radius */
+width: 45%;
+display: block; /* Add display property */
+align-items: center;
+justify-content: center;
+@media only screen and (max-width: 768px) { /* Tablet styles */
+  height:30vh;
+}
+`;
+const StyledBox1 = styled.div`
+background-color: #f8f9fa; /* Set background color */
+border: 1px solid #ced4da; /* Add border */
+border-radius: 10px; /* Add border radius */
+width: 45%;
+display: block; /* Add display property */
+align-items: center;
+justify-content: center;
+padding:10px;
+@media only screen and (max-width: 768px) { /* Tablet styles */
+  height:40vh;
+}
+`;
+
+
+export default function Home() {
+  const navigate = useNavigate();
   const [showFields, setShowFields] = useState(true);
   const [name, setName] = useState('');
   const [nameError, setNameError] = useState(false)
@@ -63,48 +83,57 @@ export default function Home({setAuth}) {
   const webCamRef = useRef(null)
   const [url, setUrl] = useState(null)
   const [table, settable] = useState([])
-  const [people,setPeople]=useState('')
+  const [people, setPeople] = useState('')
+
+  useEffect(() => {
+    const token = localStorage.getItem('token');
+    if (!token) {
+      navigate('/')
+    }
+
+  }, [])
 
   useEffect(() => {
     vacantSeat()
-  }, [])
+  }, [table])
 
-  setInterval(()=>{
-   const refreshToken=localStorage.getItem('refresh_token');
-   refreshTokens(refreshToken);
-  },3550000);
+  setInterval(() => {
+    const refreshToken = localStorage.getItem('refresh_token');
+    refreshTokens(refreshToken);
+  }, 3550000);
 
-  const refreshTokens=(refreshToken)=>{
-    const phone=localStorage.getItem('phone_no');
+  const refreshTokens = (refreshToken) => {
+    const phone = localStorage.getItem('phone_no');
     axios.post(LOGINAPI, {
-      phone_number:phone,
-      refresh_token:refreshToken,
-  },{mode:'cors'})
+      phone_number: phone,
+      refresh_token: refreshToken,
+    }, { mode: 'cors' })
       .then(function (response) {
-          const token = response.data.security_tokens.idToken;
-          const refreshToken=response.data.security_tokens.refreshToken;
-          localStorage.setItem('token', token);
-          localStorage.setItem('refresh_token', refreshToken);
+        const token = response.data.security_tokens.idToken;
+        const refreshToken = response.data.security_tokens.refreshToken;
+        localStorage.setItem('token', token);
+        localStorage.setItem('refresh_token', refreshToken);
       })
       .catch(function (error) {
-          console.error('error', error);
-          toast('Failed to verify',{
-            autoClose: 500,
-            hideProgressBar: true
+        console.error('error', error);
+        toast('Failed to verify', {
+          autoClose: 500,
+          hideProgressBar: true
         })
-          
+
       });
   }
 
-  const logoutPage=()=>{
-  navigate('/')
-  localStorage.removeItem('token')
-  localStorage.removeItem('refresh_token');
-  localStorage.removeItem('branch_id');
-  localStorage.removeItem('property_folder');
-  localStorage.removeItem('phone_no');
-  localStorage.removeItem('image_path');
-  setAuth(false)
+  const logoutPage = () => {
+    navigate('/')
+    localStorage.removeItem('token')
+    localStorage.removeItem('refresh_token');
+    localStorage.removeItem('branch_id');
+    localStorage.removeItem('property_folder');
+    localStorage.removeItem('phone_no');
+    localStorage.removeItem('image_path');
+    setUrl('')
+
   }
 
   // const containerStyle = {
@@ -151,7 +180,7 @@ export default function Home({setAuth}) {
 
   // useEffect(() => {
   //   if (url) {
-   
+
   //     apiDataCall();
   //   }
   // }, [url]);
@@ -160,7 +189,7 @@ export default function Home({setAuth}) {
   const apiDataCall = () => {
     const propertyFolder = localStorage.getItem('property_folder');
     const token = localStorage.getItem('token');
-    console.log("helllooo",propertyFolder,token);
+    console.log("helllooo", propertyFolder, token);
     function generateRandomString(length) {
       const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
       let result = '';
@@ -185,8 +214,10 @@ export default function Home({setAuth}) {
       axios({
         method: 'put',
         url: API_BASE_URL,
-        headers:{'Content-Type': 'image/jpeg',
-        'Authorization': `Bearer ${token}`},
+        headers: {
+          'Content-Type': 'image/jpeg',
+          'Authorization': `Bearer ${token}`
+        },
         params: {
           bucket: bucket,
           property_folder: propertyFolder,
@@ -198,24 +229,23 @@ export default function Home({setAuth}) {
       }).then(response => {
         if (response.data.message.recognition == 'Person not recognized') {
           console.log('Done', response.data);
-          const path=response.data.message.image_path;
-          localStorage.setItem('image_path',path)
-          toast("Image upload successful",{
+          const path = response.data.message.image_path;
+          localStorage.setItem('image_path', path)
+          toast("Image upload successful", {
             autoClose: 500,
             hideProgressBar: true
-        });
+          });
           setShowFields(true)
 
         }
         if (response.data.message.recognition == 'Person recognized') {
           console.log('Done');
-          const path=response.data.message.image_path;
-          localStorage.setItem('image_path',path)
-          toast("Image recognize successfully",{
+          const path = response.data.message.image_path;
+          localStorage.setItem('image_path', path)
+          toast("Image recognize successfully", {
             autoClose: 500,
             hideProgressBar: true
-        });
-        setShowFields(true)
+          });
           setName(response.data.message.name)
           setCustomerId(response.data.message.customer_id)
           setCustomerType(response.data.message.customer_type)
@@ -223,11 +253,11 @@ export default function Home({setAuth}) {
         }
         // console.log('Image upload successful:', response.data);
       }).catch(error => {
-        console.error('Error uploading image:', error);
-        toast('Token expired',{
+        console.error('Error uploading image:', token);
+        toast('Token expired', {
           autoClose: 500,
           hideProgressBar: true
-      })
+        })
       });
 
     }
@@ -235,61 +265,61 @@ export default function Home({setAuth}) {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-   const branch= localStorage.getItem('branch_id');
-   const property= localStorage.getItem('property_folder');
-   const image= localStorage.getItem('image_path');
+    const branch = localStorage.getItem('branch_id');
+    const property = localStorage.getItem('property_folder');
+    const image = localStorage.getItem('image_path');
     if (!name && !phoneNumber && !customerId && !url) {
-      toast('First Capture Image and Enter details',{
+      toast('First Capture Image and Enter details', {
         autoClose: 500,
         hideProgressBar: true
-    });
+      });
       return;
     }
-    
+
     else {
-      console.log(branch,property,image);
+      console.log(branch, property, image);
       axios.post(VISITSTART, {
-        
-          branch_id: branch,
-          property_folder: property,
-          customer_id: customerId,
-          customer_name: name,
-          phone: phoneNumber,
-          image_path: image,
-          party_size:people
-      
-    },
-    {
-      headers: { 'Content-Type': 'application/json' }
-  })
+
+        branch_id: branch,
+        property_folder: property,
+        customer_id: customerId,
+        customer_name: name,
+        phone: phoneNumber,
+        image_path: image,
+        party_size: people
+
+      },
+        {
+          headers: { 'Content-Type': 'application/json' }
+        })
         .then(function (response) {
-            toast('Visit Started',{
-              autoClose: 500,
-              hideProgressBar: true,
-              style: {
-                backgroundColor: 'green', // Example background color
+          toast('Visit Started', {
+            autoClose: 500,
+            hideProgressBar: true,
+            style: {
+              backgroundColor: 'green', // Example background color
             }
           })
-            console.log('data',response.data);
-            setShowFields(false)
-            setShowCustomer(true)
+          console.log('data', response.data);
+          setShowFields(false)
+          setShowCustomer(true)
 
-           
+
         })
         .catch(function (error) {
-            console.error('error', error);
-            toast('Failed to verify',{
-              autoClose: 500,
-              hideProgressBar: true
+          console.error('error', error);
+          toast('Failed to verify', {
+            autoClose: 500,
+            hideProgressBar: true
           })
-            
+
         });
-     
+
     }
   }
 
   const vacantSeat = () => {
-    const branch=localStorage.getItem('branch_id');
+    const branch = localStorage.getItem('branch_id');
     axios({
       method: 'get',
       url: VACANTSEAT,
@@ -306,10 +336,10 @@ export default function Home({setAuth}) {
 
   }
 
-  const handleRefresh=()=>{
+  const handleRefresh = () => {
     apiDataCall()
   }
-  const onSkip=()=>{
+  const onSkip = () => {
     setShowCustomer(false)
     setShowFields(true)
     setName('')
@@ -320,37 +350,37 @@ export default function Home({setAuth}) {
     setDropdown2('')
   }
 
-  const afterVisit=()=>{
+  const afterVisit = () => {
     axios.post(AFTERVISIT, {
       "staff_id": "server1",
       "table_id": '1',
-      "visit_id":'1',
-  },{
-    headers: { 'Content-Type': 'application/json' }
-})
+      "visit_id": '1',
+    }, {
+      headers: { 'Content-Type': 'application/json' }
+    })
       .then(function (response) {
-          toast('Success',{
-            autoClose: 500,
-            hideProgressBar: true
+        toast('Success', {
+          autoClose: 500,
+          hideProgressBar: true
         })
         console.log(response.data);
-         
+
       })
       .catch(function (error) {
-          console.error('error', error);
-          toast('Failed',{
-            autoClose: 500,
-            hideProgressBar: true
+        console.error('error', error);
+        toast('Failed', {
+          autoClose: 500,
+          hideProgressBar: true
         })
       }).finally(() => {
-         
+
       });
   }
 
   const trueCount = table.reduce((acc, staff) => (
     acc + staff.tables.filter(table => table.table_status === 'true').length
   ), 0);
-  
+
   const falseCount = table.reduce((acc, staff) => (
     acc + staff.tables.filter(table => table.table_status === 'false').length
   ), 0);
@@ -358,167 +388,210 @@ export default function Home({setAuth}) {
   return (
     <>
       <div className="container">
-      <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', marginTop: '2%' }}>
-      <h2 style={{fontFamily: "'Roboto', sans-serif",
-          fontWeight: 700,
-          color: '#007bff',
-          textShadow: '2px 2px 4px rgba(0, 0, 0, 0.1)',
-          letterSpacing: '1px'}}>Welcome Reception</h2>
-      <button onClick={logoutPage} style={{ backgroundColor: '#007bff', border: 'none', borderRadius: 10, padding: 4, color: 'white',position:'absolute',right:20 }}>Logout</button>
-    </div>
-        <h3 className="mb-2 mt-2" style={{
-          fontFamily: "'Roboto', sans-serif",
-          fontWeight: 700,
-          color: '#007bff',
-          textShadow: '2px 2px 4px rgba(0, 0, 0, 0.1)',
-          letterSpacing: '1px'
-        }}>Customer Verify</h3>
-         {/* <heading2 className="mb-2 mt-2"
+
+        <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', marginTop: '2%' }}>
+          <h2 style={{
+            fontFamily: "'Roboto', sans-serif",
+            fontWeight: 700,
+            color: '#007bff',
+            textShadow: '2px 2px 4px rgba(0, 0, 0, 0.1)',
+            letterSpacing: '1px',
+          }}>Welcome to Reception</h2>
+          <button onClick={logoutPage} style={{ backgroundColor: '#007bff', border: 'none', borderRadius: 8, padding: 7, color: 'white', position: 'absolute', right: 20 }}>Logout</button>
+        </div>
+
+        {/* <heading2 className="mb-2 mt-2"
         >Smile Please</heading2> */}
 
         <div className="row">
-          <div className="col-md-3">
-            <div className="row">
-              <div className="col-auto">
-                <Webcam
-                  style={{ width: '100%', height: '100%',borderRadius:50 }}
-                  audio={false}
-                  ref={webCamRef}
-                  screenshotFormat="image/jpeg"
-                  videoConstraints={videoConstraints}
-                  onUserMedia={onUsermedia}
-                  mirrored={true}
-                />
+          <div style={{ justifyContent: 'space-between', display: 'flex', marginTop: '3%' }}>
+            <StyledBox>
+              <Heading1>Customer Verify</Heading1>
+              <div style={{ display: 'flex', alignItems: 'center', marginTop: '5%' }
+              }>
+                <div style={{ width: '90%', height: '70%' }}>
+                  <Webcam
+                    style={{ width: '90%', height: '90%', borderRadius: 50, marginLeft: '4%' }}
+                    audio={false}
+                    ref={webCamRef}
+                    screenshotFormat="image/jpeg"
+                    videoConstraints={videoConstraints}
+                    onUserMedia={onUsermedia}
+                    mirrored={true}
+                  />
+                </div>
+                {url && (
+                  <div className="col-md-2" style={{ width: '35%', height: '35%', marginRight: '2%' }}>
+                    <img src={url} alt="Screenshot" className="img-fluid" style={{ borderRadius: 30 }} />
+                  </div>
+                )}
               </div>
-            </div>
-            <div className="row">
-              <div className="col">
-                <button className="btn btn-primary mr-3" style={{ margin: 20 }} onClick={capturePhoto}>
-                  Capture
-                </button>
-                <button className="btn btn-primary"  onClick={handleRefresh}>
-                  Submit
-                </button>
+              <div className="row" style={{ marginTop: '3%', marginLeft: '5%' }}>
+                <div className="col-md-6 d-flex justify-content-between align-items-center">
+                  <button className="btn btn-primary" style={{ flex: '1', marginRight: '5px' }} onClick={capturePhoto}>
+                    Capture
+                  </button>
+                  <button className="btn btn-primary" style={{ flex: '1', marginLeft: '5px' }} onClick={handleRefresh}>
+                    Submit
+                  </button>
+                </div>
               </div>
+              {/* <div className="row">
+    <div className="col-md-3">
+      <div className="row">
+        <div className="col-auto">
+          <Webcam
+            style={{ width: '100%', height: '100%', borderRadius: 50 }}
+            audio={false}
+            ref={webCamRef}
+            screenshotFormat="image/jpeg"
+            videoConstraints={videoConstraints}
+            onUserMedia={onUsermedia}
+            mirrored={true}
+          />
+        </div>
+      </div>
+      <div className="row">
+        <div className="col-md-6 d-flex justify-content-between align-items-center">
+          <button className="btn btn-primary mr-md-3" style={{ margin: 20 }} onClick={capturePhoto}>
+            Capture
+          </button>
+          <button className="btn btn-primary" onClick={handleRefresh}>
+            Submit
+          </button>
+        </div>
+      </div>
+    </div>
+    {url && (
+      <div className="col-md-2" style={{ width: '20%', height: '20%', marginTop: '2.5%' }}>
+        <img src={url} alt="Screenshot" className="img-fluid" style={{ borderRadius: 30 }} />
+      </div>
+    )}
+  </div> */}
+            </StyledBox>
+            <div className="col-md-1" style={{ justifyContent: 'center', alignItems: 'center', }}>
+              <div style={{ borderLeft: '1px solid #000', height: '100%', marginLeft: '50%' }}></div>
             </div>
+
+            <StyledBox1>
+
+              {showFields && (
+                <div className="form-container md-5" style={{}} >
+                  <h2 style={{
+                    fontFamily: "'Roboto', sans-serif",
+                    fontWeight: 700,
+                    color: '#007bff',
+                    textShadow: '2px 2px 4px rgba(0, 0, 0, 0.1)',
+                    letterSpacing: '0px', marginTop: '4%'
+                  }}>Provide Customer Information</h2>
+                  <h4>Customer Type :- {customerType}</h4>
+                  <form onSubmit={handleSubmit}>
+                    <div className="form-group">
+                      <label htmlFor="name">Name:</label>
+                      <input
+                        type="text"
+                        id="name"
+                        name="name"
+                        className="form-control"
+                        value={name}
+                        onChange={(e) => setName(e.target.value)}
+                        required
+                      />
+                    </div>
+
+
+                    <div className="form-group">
+                      <label htmlFor="customerId">Customer Phone:</label>
+                      <input
+                        type="text"
+                        id="customerId"
+                        name="customerId"
+                        className="form-control"
+                        value={phoneNumber}
+                        onChange={(e) => setPhoneNumber(e.target.value)}
+                        required
+                      />
+                    </div>
+                    <div className="form-group">
+                      <label htmlFor="customerId">Number of People:</label>
+                      <input
+                        type="text"
+                        id="customerId"
+                        name="customerId"
+                        className="form-control"
+                        value={people}
+                        onChange={(e) => setPeople(e.target.value)}
+                        required
+                      />
+                    </div>
+
+
+
+
+                    <div className="text-center">
+                      <button type="submit" className="btn btn-primary mt-4">
+                        Add Visit
+                      </button>
+                    </div>
+                  </form>
+                </div>
+              )}
+
+              {showCustomer && (
+                <div style={{}}>
+                  <div style={{ display: 'flex', justifyContent: "space-between", }}>
+                    <div className="form-group">
+                      <label htmlFor="dropdown1">Staff:</label>
+                      <select
+                        id="dropdown1"
+                        name="dropdown1"
+                        className="form-control"
+                        value={dropdown1}
+                        onChange={(e) => setDropdown1(e.target.value)}
+                      >
+                        <option value="">Select an option</option>
+                        <option value="option1">1</option>
+                        <option value="option2">2</option>
+                      </select>
+                    </div>
+
+                    <div className="form-group">
+                      <label htmlFor="dropdown2">Table:</label>
+                      <select
+                        id="dropdown2"
+                        name="dropdown2"
+                        className="form-control"
+                        value={dropdown2}
+                        onChange={(e) => setDropdown2(e.target.value)}
+                      >
+                        <option value="">Select an option</option>
+                        <option value="option1">1</option>
+                        <option value="option2">2</option>
+                      </select>
+                    </div>
+                  </div>
+
+                  <div style={{ display: 'flex', justifyContent: "center", marginTop: '20px' }}>
+                    <div className="text-center">
+                      <button onClick={afterVisit} type="submit" className="btn btn-primary mx-2">
+                        Submit
+                      </button>
+                    </div>
+                    <div className="text-center">
+                      <button onClick={onSkip} type="button" className="btn btn-primary mx-2">
+                        Skip
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              )}
+
+            </StyledBox1>
           </div>
-          {url && (
-            <div className="col-md-2 " style={{width:'20%',height:'20%',marginTop:'2.5%', }}>
-              <img src={url} alt="Screenshot" className="img-fluid" style={{borderRadius:30}} />
-            </div>
-          )}
-          <div className="col-md-1 " style={{}}>
-            <div style={{ borderLeft: '1px solid #000', height: '100%', margin: '0 auto' }}></div>
-          </div>
-          
-       
-          
-  
- {/* <div className="col-md-1" style={{ borderLeft: '1px solid #000', height: '100%', margin: '0 auto' }}></div> */}
 
-          <div className="col-md-4 offset-md-1">
-            {showFields && (
-              <div className="form-container md-5" >
-                <h2 className="mb-3">Provide Customer Information</h2>
-                <h3>Customer Type :- {customerType}</h3>
-                <form onSubmit={handleSubmit}>
-                  <div className="form-group">
-                    <label htmlFor="name">Name:</label>
-                    <input
-                      type="text"
-                      id="name"
-                      name="name"
-                      className="form-control"
-                      value={name}
-                      onChange={(e) => setName(e.target.value)}
-                      required
-                    />
-                  </div>
-
-                  <div className="form-group">
-                    <label htmlFor="customerId">Customer Phone:</label>
-                    <input
-                      type="text"
-                      id="customerId"
-                      name="customerId"
-                      className="form-control"
-                      value={phoneNumber}
-                      onChange={(e) => setPhoneNumber(e.target.value)}
-                    />
-                  </div>
-                  <div className="form-group">
-                    <label htmlFor="customerId">Number of People:</label>
-                    <input
-                      type="text"
-                      id="customerId"
-                      name="customerId"
-                      className="form-control"
-                      value={people}
-                      onChange={(e) => setPeople(e.target.value)}
-                    />
-                  </div>
+          {/* <div className="col-md-1" style={{ borderLeft: '1px solid #000', height: '100%', margin: '0 auto' }}></div> */}
 
 
-
-
-                  <div className="text-center">
-                    <button type="submit" className="btn btn-primary mt-4">
-                      Add Visit
-                    </button>
-                  </div>
-                </form>
-              </div>
-            )}
-
-            {showCustomer && (
-                        <div style={{}}>
-                        <div style={{ display: 'flex', justifyContent: "space-between",}}>
-                          <div className="form-group">
-                            <label htmlFor="dropdown1">Staff:</label>
-                            <select
-                              id="dropdown1"
-                              name="dropdown1"
-                              className="form-control"
-                              value={dropdown1}
-                              onChange={(e) => setDropdown1(e.target.value)}
-                            >
-                              <option value="">Select an option</option>
-                              <option value="option1">1</option>
-                              <option value="option2">2</option>
-                            </select>
-                          </div>
-                      
-                          <div className="form-group">
-                            <label htmlFor="dropdown2">Table:</label>
-                            <select
-                              id="dropdown2"
-                              name="dropdown2"
-                              className="form-control"
-                              value={dropdown2}
-                              onChange={(e) => setDropdown2(e.target.value)}
-                            >
-                              <option value="">Select an option</option>
-                              <option value="option1">1</option>
-                              <option value="option2">2</option>
-                            </select>
-                          </div>
-                        </div>
-                      
-                        <div style={{ display: 'flex', justifyContent: "center", marginTop: '20px' }}>
-                          <div className="text-center">
-                            <button onClick={afterVisit} type="submit" className="btn btn-primary mx-2">
-                              Submit
-                            </button>
-                          </div>
-                          <div className="text-center">
-                            <button onClick={onSkip} type="button" className="btn btn-primary mx-2">
-                              Skip
-                            </button>
-                          </div>
-                        </div>
-                      </div>
-            )}
-          </div>
 
           {/* <div style={{
             display: 'flex',
@@ -563,7 +636,7 @@ export default function Home({setAuth}) {
               </div>
             ))}
           </div> */}
-           {/* <div style={{ display: 'flex',
+          {/* <div style={{ display: 'flex',
     flexDirection: 'column',
     gap: '20px',}}>
       {table.map((staff, index) => (
@@ -591,49 +664,73 @@ export default function Home({setAuth}) {
         </div>
       ))}
     </div> */}
-     
-     <div style={{ display: 'flex',
-    justifyContent: 'center',
-    alignItems: 'center',
-    height: '50vh', }}>
-      <div style={{display:'flex',flexDirection:'column'}}>
-      <p style={{marginRight:5}}>Booked: {trueCount}</p>
-    <p style={{marginRight:5}}>Vaccant: {falseCount}</p>
-    </div>
-    <div style={{ display: 'grid',
-    gridTemplateColumns: 'repeat(6, 1fr)',
-    marginTop: '10px',
-    marginBottom:'10px',
-    gap: '10px',
-    padding: '10px',
-    border: '1px solid #ccc',
-    borderRadius: '5px',
-    backgroundColor: '#FFFFFF',
-    height: '200px',
-    overflowY: 'auto',
-    }}>
-      
-      {table.map((staff) =>
-       
-        staff.tables.map((table) => (
-          <div key={table.id} style={{width: '120px',  // Increase size
-          height: '80px', // Increase size
-          justifyContent: 'center',
-          alignItems: 'center',
-          border: '1px solid #ccc',
-          borderRadius: '5px',
-          backgroundColor:table.table_status=='true'?'#fc5f51':'#a9f5bd',
-          fontSize: '20px',}}>
-           <p style={{margin:'0',
-                      fontWeight: 'bold',
-                      textAlign:'center'}}> {table.table_number}</p>
-           <p style={{margin:'0',
-                      
-                      textAlign:'center'}}> {table.table_status=='true'?'Booked':'Vaccant'}</p>
-          </div>
-        ))
-      )}
-    {/* <div>
+          <div style={{
+            border: '1px solid #ccc',
+            borderRadius: '5px',
+            backgroundColor: '#FFFFFF',
+            marginTop: 15,
+            marginBottom: 10
+          }}>
+            <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', justifyContent: 'center', marginTop: 5 }}>
+              <p style={{
+                marginRight: 20, fontFamily: "'Roboto', sans-serif",
+                fontWeight: 700,
+                color: '#fc5f51',
+                textShadow: '2px 2px 4px rgba(0, 0, 0, 0.1)',
+                letterSpacing: '0px'
+              }}>Booked: {trueCount}</p>
+              <p style={{
+                fontFamily: "'Roboto', sans-serif",
+                fontWeight: 700,
+                color: '#a9f5bd',
+                textShadow: '2px 2px 4px rgba(0, 0, 0, 0.1)',
+                letterSpacing: '0px'
+              }}>Vacant: {falseCount}</p>
+            </div>
+            <div style={{
+              display: 'flex',
+              justifyContent: 'center',
+              alignItems: 'center',
+            }}>
+              <div style={{
+                display: 'grid',
+                gridTemplateColumns: 'repeat(8, 1fr)',
+                marginBottom: '10px',
+                gap: '10px',
+                padding: '10px',
+                backgroundColor: '#FFFFFF',
+                height: '200px',
+                overflowY: 'auto',
+              }}>
+
+                {table.map((staff) =>
+
+                  staff.tables.map((table) => (
+                    <div key={table.id} style={{
+                      width: '120px',  // Increase size
+                      height: '80px', // Increase size
+                      justifyContent: 'center',
+                      alignItems: 'center',
+                      border: '1px solid #ccc',
+                      borderRadius: '5px',
+                      backgroundColor: table.table_status == 'true' ? '#fc5f51' : '#a9f5bd',
+                      fontSize: '20px',
+                    }}>
+                      <p style={{
+                        margin: '0',
+                        fontWeight: 'bold',
+                        textAlign: 'center'
+                      }}> {table.table_number}</p>
+                      <p style={{
+                        margin: '0',
+
+                        textAlign: 'center'
+                      }}> {table.table_status == 'true' ? 'Booked' : 'Vacant'}</p>
+                    </div>
+                  ))
+                )}
+
+                {/* <div>
     <p>Total True: {trueCount}</p>
     <p>Total False: {falseCount}</p>
     {table.map((staff) => (
@@ -666,8 +763,9 @@ export default function Home({setAuth}) {
       </div>
     ))}
   </div> */}
-    </div>
-    </div>
+              </div>
+            </div>
+          </div>
         </div>
         {/* <h1 onClick={logoutPage}>Logout</h1> */}
 
@@ -683,4 +781,4 @@ export default function Home({setAuth}) {
 //branch id , property folder ,response=> customer_id,name,phone and image path in api
 //s3://face-mementos/qt_faces/molecule/camera_1/Molecule_1.jpg
 
-  
+

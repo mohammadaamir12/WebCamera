@@ -1,5 +1,5 @@
 import '../App.css'
-import React, { useState } from 'react';
+import React, { useState,useEffect } from 'react';
 import axios from 'axios';
 import { LOGINAPI, VALIDATEAPI } from '../config/config'
 import { ToastContainer, toast } from 'react-toastify';
@@ -16,6 +16,14 @@ export default function Auth({setAuth}) {
     const [session,setSession]=useState('')
     const [userId,setUserId]=useState('')
     const [loading, setLoading] = useState(false); 
+
+    useEffect(()=>{
+        const token=localStorage.getItem('token');
+        if(token){
+          navigate('/Home')
+        }
+       
+      },[])
 
     const handleNumberChange = (value) => {
         const formattedValue = `+${value}`;
@@ -81,7 +89,7 @@ export default function Auth({setAuth}) {
                         autoClose: 500,
                         hideProgressBar: true
                     })
-                    setAuth(true)
+                    
                     const token = response.data.security_tokens.idToken;
                     console.log('token given',token);
                     const refreshToken=response.data.security_tokens.refreshToken;
@@ -102,6 +110,7 @@ export default function Auth({setAuth}) {
                         autoClose: 500,
                         hideProgressBar: true
                     })
+                    setLoading(false);
                     
                 });
         }
@@ -111,7 +120,7 @@ export default function Auth({setAuth}) {
 
     return (
         <div className="Auth-form-container">
-        
+        <div className="background"></div>
             <form className="Auth-form" onSubmit={showOtp ? handleOtpSubmit : handleNumberSubmit}>
                 <div className="Auth-form-content">
                     <h3 className="Auth-form-title">Sign In</h3>

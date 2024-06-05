@@ -9,19 +9,22 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 
 function App() {
   const [isAuth, setIsAuth] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
+  // useEffect(() => {
+  //   const token = localStorage.getItem('token');
+  //   if (token) {
+  //     setIsAuth(true);
+  //   }
+  // },[])
+  
   return (
     <BrowserRouter>
-    {isAuth?(
+   
      <Routes>
      <Route path="/" element={<Auth />} />
-     <Route path='/Home' element={isAuth?<Home setAuth={setIsAuth}/>:<Navigate to="/" />} />
+     <Route path='/Home' element={<Home />} />
    </Routes>
-    ):(
-      <Routes>
-        <Route path="/" element={<Auth setAuth={setIsAuth} />} />
-        <Route path="*" element={<Navigate to="/" />} />
-      </Routes>
-    )}
+   
      
     </BrowserRouter>
 
