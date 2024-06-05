@@ -95,7 +95,7 @@ export default function Home() {
 
   useEffect(() => {
     vacantSeat()
-  }, [table])
+  }, [])
 
   setInterval(() => {
     const refreshToken = localStorage.getItem('refresh_token');
