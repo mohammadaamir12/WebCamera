@@ -21,9 +21,10 @@ font-weight: 700;
 color: #007bff;
 text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
 letter-spacing: 0px;
-margin-left: 25%;
-margin-top: 5%;
+justify-content: center;
+margin-top: 2%;
 width: 100%;
+display:flex;
 
 @media only screen and (max-width: 768px) { /* Tablet styles */
   margin-left: 15%;
@@ -97,10 +98,15 @@ export default function Home() {
     vacantSeat()
   }, [])
 
-  setInterval(() => {
-    const refreshToken = localStorage.getItem('refresh_token');
-    refreshTokens(refreshToken);
-  }, 3550000);
+  useEffect(() => {
+    const intervalId = setInterval(() => {
+        const refreshToken = localStorage.getItem('refresh_token');
+        refreshTokens(refreshToken);
+        // console.log("i am calling");
+    }, 3550000);
+    return () => clearInterval(intervalId);
+}, []);
+
 
   const refreshTokens = (refreshToken) => {
     const phone = localStorage.getItem('phone_no');
@@ -246,6 +252,7 @@ export default function Home() {
             autoClose: 500,
             hideProgressBar: true
           });
+          console.log(response.data);
           setName(response.data.message.name)
           setCustomerId(response.data.message.customer_id)
           setCustomerType(response.data.message.customer_type)
@@ -407,31 +414,32 @@ export default function Home() {
           <div style={{ justifyContent: 'space-between', display: 'flex', marginTop: '3%' }}>
             <StyledBox>
               <Heading1>Customer Verify</Heading1>
-              <div style={{ display: 'flex', alignItems: 'center', marginTop: '5%' }
-              }>
-                <div style={{ width: '90%', height: '70%' }}>
-                  <Webcam
-                    style={{ width: '90%', height: '90%', borderRadius: 50, marginLeft: '4%' }}
-                    audio={false}
-                    ref={webCamRef}
-                    screenshotFormat="image/jpeg"
-                    videoConstraints={videoConstraints}
-                    onUserMedia={onUsermedia}
-                    mirrored={true}
-                  />
-                </div>
-                {url && (
-                  <div className="col-md-2" style={{ width: '35%', height: '35%', marginRight: '2%' }}>
-                    <img src={url} alt="Screenshot" className="img-fluid" style={{ borderRadius: 30 }} />
-                  </div>
-                )}
-              </div>
-              <div className="row" style={{ marginTop: '3%', marginLeft: '5%' }}>
+             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', marginTop: '3%' }}>
+  <div style={{ width: '85%', height: '60%', display: 'flex', justifyContent: 'center' }}>
+    <Webcam
+      style={{ width: '90%', height: '90%', borderRadius: 50 }}
+      audio={false}
+      ref={webCamRef}
+      screenshotFormat="image/jpeg"
+      videoConstraints={videoConstraints}
+      onUserMedia={onUsermedia}
+      mirrored={true}
+    />
+  </div>
+  <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+    {url && (
+      <div style={{ width: '80%', height: '60%',}}>
+        <img src={url} alt="Screenshot" className="img-fluid" style={{ borderRadius: 30 }} />
+      </div>
+    )}
+  </div>
+</div>
+              <div className="row" style={{ marginTop: '3%',marginBottom:'3%',alignItems:'center',justifyContent:'center' }}>
                 <div className="col-md-6 d-flex justify-content-between align-items-center">
-                  <button className="btn btn-primary" style={{ flex: '1', marginRight: '5px' }} onClick={capturePhoto}>
+                  <button className="btn btn-primary" style={{flex:1,marginRight:3  }} onClick={capturePhoto}>
                     Capture
                   </button>
-                  <button className="btn btn-primary" style={{ flex: '1', marginLeft: '5px' }} onClick={handleRefresh}>
+                  <button className="btn btn-primary" style={{ flex:1,marginLeft:3}} onClick={handleRefresh}>
                     Submit
                   </button>
                 </div>
@@ -473,120 +481,119 @@ export default function Home() {
               <div style={{ borderLeft: '1px solid #000', height: '100%', marginLeft: '50%' }}></div>
             </div>
 
-            <StyledBox1>
+           <StyledBox1>
+            
+  <div style={{display:'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', padding: '0 2%' }}>
+  <h2 style={{
+        fontFamily: "'Roboto', sans-serif",
+        fontWeight: 700,
+        color: '#007bff',
+        textShadow: '2px 2px 4px rgba(0, 0, 0, 0.1)',
+        letterSpacing: '0px', marginTop: '4%'
+      }}>Customer Details</h2>
+      <h4>Customer Type: {customerType}</h4>
+    {/* Left Side: URL */}
+   
 
-              {showFields && (
-                <div className="form-container md-5" style={{}} >
-                  <h2 style={{
-                    fontFamily: "'Roboto', sans-serif",
-                    fontWeight: 700,
-                    color: '#007bff',
-                    textShadow: '2px 2px 4px rgba(0, 0, 0, 0.1)',
-                    letterSpacing: '0px', marginTop: '4%'
-                  }}>Provide Customer Information</h2>
-                  <h4>Customer Type :- {customerType}</h4>
-                  <form onSubmit={handleSubmit}>
-                    <div className="form-group">
-                      <label htmlFor="name">Name:</label>
-                      <input
-                        type="text"
-                        id="name"
-                        name="name"
-                        className="form-control"
-                        value={name}
-                        onChange={(e) => setName(e.target.value)}
-                        required
-                      />
-                    </div>
+    {/* Right Side: Form */}
+   
+  </div>
+  <div className="form-container md-5" style={{  }}>
+    
+    <form onSubmit={handleSubmit}>
+      <div className="form-group">
+        <label htmlFor="name">Name:</label>
+        <input
+          type="text"
+          id="name"
+          name="name"
+          className="form-control"
+          value={name}
+          onChange={(e) => setName(e.target.value)}
+          required
+        />
+      </div>
+      <div className="form-group">
+        <label htmlFor="customerId">Customer Phone:</label>
+        <input
+          type="text"
+          id="customerId"
+          name="customerId"
+          className="form-control"
+          value={phoneNumber}
+          onChange={(e) => setPhoneNumber(e.target.value)}
+          required
+        />
+      </div>
+      <div className="form-group">
+        <label htmlFor="customerId">Number of People:</label>
+        <input
+          type="text"
+          id="customerId"
+          name="customerId"
+          className="form-control"
+          value={people}
+          onChange={(e) => setPeople(e.target.value)}
+          required
+        />
+      </div>
+      <div className="text-center">
+        <button type="submit" className="btn btn-primary mt-4">
+          Add Visit
+        </button>
+      </div>
+    </form>
+  </div>
 
+  {/* Showing Customer */}
+  {showCustomer && (
+    <div style={{}}>
+      <div style={{ display: 'flex', justifyContent: "space-between", }}>
+        <div className="form-group">
+          <label htmlFor="dropdown1">Staff:</label>
+          <select
+            id="dropdown1"
+            name="dropdown1"
+            className="form-control"
+            value={dropdown1}
+            onChange={(e) => setDropdown1(e.target.value)}
+          >
+            <option value="">Select an option</option>
+            <option value="option1">1</option>
+            <option value="option2">2</option>
+          </select>
+        </div>
+        <div className="form-group">
+          <label htmlFor="dropdown2">Table:</label>
+          <select
+            id="dropdown2"
+            name="dropdown2"
+            className="form-control"
+            value={dropdown2}
+            onChange={(e) => setDropdown2(e.target.value)}
+          >
+            <option value="">Select an option</option>
+            <option value="option1">1</option>
+            <option value="option2">2</option>
+          </select>
+        </div>
+      </div>
+      <div style={{ display: 'flex', justifyContent: "center", marginTop: '20px' }}>
+        <div className="text-center">
+          <button onClick={afterVisit} type="submit" className="btn btn-primary mx-2">
+            Submit
+          </button>
+        </div>
+        <div className="text-center">
+          <button onClick={onSkip} type="button" className="btn btn-primary mx-2">
+            Skip
+          </button>
+        </div>
+      </div>
+    </div>
+  )}
+</StyledBox1>
 
-                    <div className="form-group">
-                      <label htmlFor="customerId">Customer Phone:</label>
-                      <input
-                        type="text"
-                        id="customerId"
-                        name="customerId"
-                        className="form-control"
-                        value={phoneNumber}
-                        onChange={(e) => setPhoneNumber(e.target.value)}
-                        required
-                      />
-                    </div>
-                    <div className="form-group">
-                      <label htmlFor="customerId">Number of People:</label>
-                      <input
-                        type="text"
-                        id="customerId"
-                        name="customerId"
-                        className="form-control"
-                        value={people}
-                        onChange={(e) => setPeople(e.target.value)}
-                        required
-                      />
-                    </div>
-
-
-
-
-                    <div className="text-center">
-                      <button type="submit" className="btn btn-primary mt-4">
-                        Add Visit
-                      </button>
-                    </div>
-                  </form>
-                </div>
-              )}
-
-              {showCustomer && (
-                <div style={{}}>
-                  <div style={{ display: 'flex', justifyContent: "space-between", }}>
-                    <div className="form-group">
-                      <label htmlFor="dropdown1">Staff:</label>
-                      <select
-                        id="dropdown1"
-                        name="dropdown1"
-                        className="form-control"
-                        value={dropdown1}
-                        onChange={(e) => setDropdown1(e.target.value)}
-                      >
-                        <option value="">Select an option</option>
-                        <option value="option1">1</option>
-                        <option value="option2">2</option>
-                      </select>
-                    </div>
-
-                    <div className="form-group">
-                      <label htmlFor="dropdown2">Table:</label>
-                      <select
-                        id="dropdown2"
-                        name="dropdown2"
-                        className="form-control"
-                        value={dropdown2}
-                        onChange={(e) => setDropdown2(e.target.value)}
-                      >
-                        <option value="">Select an option</option>
-                        <option value="option1">1</option>
-                        <option value="option2">2</option>
-                      </select>
-                    </div>
-                  </div>
-
-                  <div style={{ display: 'flex', justifyContent: "center", marginTop: '20px' }}>
-                    <div className="text-center">
-                      <button onClick={afterVisit} type="submit" className="btn btn-primary mx-2">
-                        Submit
-                      </button>
-                    </div>
-                    <div className="text-center">
-                      <button onClick={onSkip} type="button" className="btn btn-primary mx-2">
-                        Skip
-                      </button>
-                    </div>
-                  </div>
-                </div>
-              )}
-
-            </StyledBox1>
           </div>
 
           {/* <div className="col-md-1" style={{ borderLeft: '1px solid #000', height: '100%', margin: '0 auto' }}></div> */}
