@@ -244,9 +244,16 @@ export default function Home() {
           setShowFields(true)
 
         }
+        console.log(response.data.message.face_features.age_range[0],'ttttttttttttt');
         if (response.data.message.recognition == 'Person recognized') {
-          console.log('Done');
-          const path = response.data.message.image_path;
+          if(response.data.message.face_features.age_range[0]<=21){
+            toast("Please Verify Your Age", {
+              autoClose: 1000,
+              hideProgressBar: true,
+              backgroundColor:'red'
+            });
+          } else{
+            const path = response.data.message.image_path;
           localStorage.setItem('image_path', path)
           toast("Image recognize successfully", {
             autoClose: 500,
@@ -257,10 +264,12 @@ export default function Home() {
           setCustomerId(response.data.message.customer_id)
           setCustomerType(response.data.message.customer_type)
           setPhoneNumber(response.data.message.phone)
+          }
+          
         }
         // console.log('Image upload successful:', response.data);
       }).catch(error => {
-        console.error('Error uploading image:', token);
+        console.error('Error uploading image:', error);
         toast('Token expired', {
           autoClose: 500,
           hideProgressBar: true
