@@ -303,7 +303,7 @@ export default function Home() {
         },
         data: bytes.buffer,
       }).then(response => {
-        if(response.data.message.face_features.age_range[0]<21){
+        if(response.data.message.face_features.age_range[0]>21){
           
         if (response.data.message.recognition == 'Person not recognized') {
           console.log('Done', response.data);
