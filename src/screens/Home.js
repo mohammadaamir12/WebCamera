@@ -68,6 +68,75 @@ padding:10px;
   height:40vh;
 }
 `;
+const Wrapper = styled.div`
+  position: relative;
+  filter: ${(props) => (props.blur ? 'blur(5px)' : 'none')};
+  transition: filter 0.3s ease;
+  `;
+
+  const Overlay = styled.div`
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 1000;
+  display: ${(props) => (props.show ? 'block' : 'none')};
+`;
+const PopupContainer = styled.div`
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: white;
+  padding: 20px;
+  border: 1px solid #ccc;
+  z-index: 1001;
+  display: ${(props) => (props.show ? 'block' : 'none')};
+`;
+
+const AuthFormContainer = styled.div`
+  width: 100%;
+  max-width: 400px;
+  margin: auto;
+  padding: 20px;
+`;
+
+const FormGroup = styled.div`
+  margin-bottom: 1rem;
+  
+`;
+
+const FormControl = styled.input`
+  height: 40px;
+  appearance: none;
+  padding: 0.5rem 1rem;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  background-color: #fff;
+  color: #333;
+  font-size: 1rem;
+  width: 100%;
+  max-width: 300px;
+  box-sizing: border-box;
+`;
+
+const SubmitButton = styled.button`
+  background-color: #007bff;
+  color: #fff;
+  padding: 0.5rem 2.25rem;
+  border: none;
+  border-radius: 5px;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+   align-self:center;
+  &:hover {
+    background-color: #0056b3;
+  }
+`;
 
 
 export default function Home() {
@@ -85,6 +154,7 @@ export default function Home() {
   const [url, setUrl] = useState(null)
   const [table, settable] = useState([])
   const [people, setPeople] = useState('')
+  const [showPopup,setShowPopup]=useState(false)
 
   useEffect(() => {
     const token = localStorage.getItem('token');
@@ -233,6 +303,8 @@ export default function Home() {
         },
         data: bytes.buffer,
       }).then(response => {
+        if(response.data.message.face_features.age_range[0]>21){
+          
         if (response.data.message.recognition == 'Person not recognized') {
           console.log('Done', response.data);
           const path = response.data.message.image_path;
@@ -244,15 +316,8 @@ export default function Home() {
           setShowFields(true)
 
         }
-        console.log(response.data.message.face_features.age_range[0],'ttttttttttttt');
+        // console.log(response.data.message.face_features.age_range[0],'ttttttttttttt');
         if (response.data.message.recognition == 'Person recognized') {
-          if(response.data.message.face_features.age_range[0]<=21){
-            toast("Please Verify Your Age", {
-              autoClose: 1000,
-              hideProgressBar: true,
-              backgroundColor:'red'
-            });
-          } else{
             const path = response.data.message.image_path;
           localStorage.setItem('image_path', path)
           toast("Image recognize successfully", {
@@ -264,13 +329,16 @@ export default function Home() {
           setCustomerId(response.data.message.customer_id)
           setCustomerType(response.data.message.customer_type)
           setPhoneNumber(response.data.message.phone)
-          }
-          
         }
+      } else{
+        setShowPopup(true)  
+
+      }
+        
         // console.log('Image upload successful:', response.data);
-      }).catch(error => {
+       }).catch(error => {
         console.error('Error uploading image:', error);
-        toast('Token expired', {
+        toast('Error Uploading Image', {
           autoClose: 500,
           hideProgressBar: true
         })
@@ -403,6 +471,8 @@ export default function Home() {
 
   return (
     <>
+    <div>
+       <Wrapper blur={showPopup}>
       <div className="container">
 
         <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', marginTop: '2%' }}>
@@ -788,7 +858,21 @@ export default function Home() {
         <ToastContainer
         />
       </div>
-
+      </Wrapper>
+       <Overlay show={showPopup} onClick={() =>setShowPopup(false)} />
+         <PopupContainer show={showPopup}>
+        <AuthFormContainer>
+          <form>
+          <div style={{ textAlign: 'center' }}>
+  <p>You are under age, please verify your age</p>
+  <button className="btn btn-primary" style={{}} onClick={() => setShowPopup(false)}>
+    OK
+  </button>
+</div>
+          </form>
+        </AuthFormContainer>
+      </PopupContainer>
+</div>
 
     </>
 
