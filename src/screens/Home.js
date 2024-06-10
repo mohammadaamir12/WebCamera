@@ -303,7 +303,7 @@ export default function Home() {
         },
         data: bytes.buffer,
       }).then(response => {
-        if(response.data.message.face_features.age_range[0]>21){
+        if(response.data.message.face_features.age_range[0]<21){
           
         if (response.data.message.recognition == 'Person not recognized') {
           console.log('Done', response.data);
@@ -864,7 +864,7 @@ export default function Home() {
         <AuthFormContainer>
           
           <div style={{ textAlign: 'center' }}>
-  <p>You are under age, please verify your age</p>
+  <p>It appears that you might be under the legal drinking age.</p>
   <button className="btn btn-primary" onClick={() => setShowPopup(false)}>
     OK
   </button>
