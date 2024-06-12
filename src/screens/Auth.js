@@ -168,11 +168,34 @@ export default function Auth({setAuth}) {
                         </div>
                     )}
                     <div className="d-grid gap-2 mt-3">
-                        <button type="submit" className="btn btn-primary">
-                            {showOtp ? 'Submit OTP' : 'Submit Number'}
-                            {loading==true?<div className="loader">Loading...</div>:null}
-                        </button>
-                    </div>
+    <button type="submit" className="btn btn-primary" style={{ position: 'relative' }} disabled={loading}>
+        {showOtp ? 'Submit OTP' : 'Submit Number'}
+        {loading && (
+            <div style={{
+                width: '20px',
+                height: '20px',
+                border: '3px solid #f3f3f3', /* Light grey */
+                borderTop: '3px solid #3498db', /* Blue */
+                borderRadius: '50%',
+                position: 'absolute',
+                top: '50%',
+                left: '50%',
+                marginTop: '-10px',
+                marginLeft: '-10px',
+                animation: 'spin 1s linear infinite' /* Add spinning animation */
+            }}></div>
+        )}
+    </button>
+    <style>
+        {`
+            @keyframes spin {
+                0% { transform: rotate(0deg); }
+                100% { transform: rotate(360deg); }
+            }
+        `}
+    </style>
+</div>
+
                     {/* <p className="forgot-password text-right mt-2">
               Forgot <a href="#">password?</a>
           </p> */}

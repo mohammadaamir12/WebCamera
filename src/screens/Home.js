@@ -155,6 +155,9 @@ export default function Home() {
   const [table, settable] = useState([])
   const [people, setPeople] = useState('')
   const [showPopup,setShowPopup]=useState(false)
+  const [loading,setLoading]=useState(false)
+  const [loading2,setLoading2]=useState(false)
+  const [loading3,setLoading3]=useState(false)
 
   useEffect(() => {
     const token = localStorage.getItem('token');
@@ -263,6 +266,7 @@ export default function Home() {
 
 
   const apiDataCall = () => {
+    setLoading(true)
     const propertyFolder = localStorage.getItem('property_folder');
     const token = localStorage.getItem('token');
     console.log("helllooo", propertyFolder, token);
@@ -314,7 +318,7 @@ export default function Home() {
             hideProgressBar: true
           });
           setShowFields(true)
-
+          setLoading(false)
         }
         // console.log(response.data.message.face_features.age_range[0],'ttttttttttttt');
         if (response.data.message.recognition == 'Person recognized') {
@@ -329,8 +333,10 @@ export default function Home() {
           setCustomerId(response.data.message.customer_id)
           setCustomerType(response.data.message.customer_type)
           setPhoneNumber(response.data.message.phone)
+          setLoading(false)
         }
       } else{
+        setLoading(false)
         setShowPopup(true)  
 
       }
@@ -342,6 +348,7 @@ export default function Home() {
           autoClose: 500,
           hideProgressBar: true
         })
+        setLoading(false)
       });
 
     }
@@ -349,6 +356,7 @@ export default function Home() {
 
   const handleSubmit = (e) => {
     e.preventDefault();
+    setLoading2(true)
     const branch = localStorage.getItem('branch_id');
     const property = localStorage.getItem('property_folder');
     const image = localStorage.getItem('image_path');
@@ -357,6 +365,7 @@ export default function Home() {
         autoClose: 500,
         hideProgressBar: true
       });
+      setLoading2(false)
       return;
     }
 
@@ -384,6 +393,7 @@ export default function Home() {
               backgroundColor: 'green', // Example background color
             }
           })
+          setLoading2(true)
           console.log('data', response.data);
           setShowFields(false)
           setShowCustomer(true)
@@ -396,6 +406,7 @@ export default function Home() {
             autoClose: 500,
             hideProgressBar: true
           })
+          setLoading2(false)
 
         });
 
@@ -435,6 +446,7 @@ export default function Home() {
   }
 
   const afterVisit = () => {
+    setLoading3(true)
     axios.post(AFTERVISIT, {
       "staff_id": "server1",
       "table_id": '1',
@@ -447,6 +459,7 @@ export default function Home() {
           autoClose: 500,
           hideProgressBar: true
         })
+        setLoading3(false)
         console.log(response.data);
 
       })
@@ -456,8 +469,9 @@ export default function Home() {
           autoClose: 500,
           hideProgressBar: true
         })
+        setLoading3(false)
       }).finally(() => {
-
+      setLoading3(false)
       });
   }
 
@@ -518,9 +532,32 @@ export default function Home() {
                   <button className="btn btn-primary" style={{flex:1,marginRight:3  }} onClick={capturePhoto}>
                     Capture
                   </button>
-                  <button className="btn btn-primary" style={{ flex:1,marginLeft:3}} onClick={handleRefresh}>
+                  <button className="btn btn-primary" style={{ flex:1,marginLeft:3,position: 'relative' }} onClick={handleRefresh} disabled={loading}>
                     Submit
+                    {loading && (
+            <div style={{
+                width: '20px',
+                height: '20px',
+                border: '3px solid #f3f3f3', /* Light grey */
+                borderTop: '3px solid #3498db', /* Blue */
+                borderRadius: '50%',
+                position: 'absolute',
+                top: '50%',
+                left: '50%',
+                marginTop: '-10px',
+                marginLeft: '-10px',
+                animation: 'spin 1s linear infinite' /* Add spinning animation */
+            }}></div>
+        )}
                   </button>
+                  <style>
+        {`
+            @keyframes spin {
+                0% { transform: rotate(0deg); }
+                100% { transform: rotate(360deg); }
+            }
+        `}
+    </style>
                 </div>
               </div>
               {/* <div className="row">
@@ -579,7 +616,7 @@ export default function Home() {
   </div>
   <div className="form-container md-5" style={{  }}>
     
-    <form onSubmit={handleSubmit}>
+    <form >
       <div className="form-group">
         <label htmlFor="name">Name:</label>
         <input
@@ -617,9 +654,32 @@ export default function Home() {
         />
       </div>
       <div className="text-center">
-        <button type="submit" className="btn btn-primary mt-4">
-          Add Visit
-        </button>
+        <button className="btn btn-primary mt-4" style={{ position: 'relative' }} onClick={handleSubmit} disabled={loading2}>
+                   Add Visit
+                    {loading2 && (
+            <div style={{
+                width: '20px',
+                height: '20px',
+                border: '3px solid #f3f3f3', /* Light grey */
+                borderTop: '3px solid #3498db', /* Blue */
+                borderRadius: '50%',
+                position: 'absolute',
+                top: '50%',
+                left: '50%',
+                marginTop: '-10px',
+                marginLeft: '-10px',
+                animation: 'spin 1s linear infinite' /* Add spinning animation */
+            }}></div>
+        )}
+                  </button>
+                  <style>
+        {`
+            @keyframes spin {
+                0% { transform: rotate(0deg); }
+                100% { transform: rotate(360deg); }
+            }
+        `}
+    </style>
       </div>
     </form>
   </div>
@@ -659,9 +719,32 @@ export default function Home() {
       </div>
       <div style={{ display: 'flex', justifyContent: "center", marginTop: '20px' }}>
         <div className="text-center">
-          <button onClick={afterVisit} type="submit" className="btn btn-primary mx-2">
-            Submit
-          </button>
+          <button className="btn btn-primary mx-2" style={{position: 'relative' }} onClick={afterVisit} disabled={loading3}>
+                    Submit
+                    {loading3 && (
+            <div style={{
+                width: '20px',
+                height: '20px',
+                border: '3px solid #f3f3f3', /* Light grey */
+                borderTop: '3px solid #3498db', /* Blue */
+                borderRadius: '50%',
+                position: 'absolute',
+                top: '50%',
+                left: '50%',
+                marginTop: '-10px',
+                marginLeft: '-10px',
+                animation: 'spin 1s linear infinite' /* Add spinning animation */
+            }}></div>
+        )}
+                  </button>
+                  <style>
+        {`
+            @keyframes spin {
+                0% { transform: rotate(0deg); }
+                100% { transform: rotate(360deg); }
+            }
+        `}
+    </style>
         </div>
         <div className="text-center">
           <button onClick={onSkip} type="button" className="btn btn-primary mx-2">
