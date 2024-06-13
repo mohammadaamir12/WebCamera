@@ -389,11 +389,8 @@ export default function Home() {
           toast('Visit Started', {
             autoClose: 500,
             hideProgressBar: true,
-            style: {
-              backgroundColor: 'green', // Example background color
-            }
           })
-          setLoading2(true)
+          setLoading2(false)
           console.log('data', response.data);
           setShowFields(false)
           setShowCustomer(true)
@@ -686,7 +683,7 @@ export default function Home() {
 
   {/* Showing Customer */}
   {showCustomer && (
-    <div style={{}}>
+    <div>
       <div style={{ display: 'flex', justifyContent: "space-between", }}>
         <div className="form-group">
           <label htmlFor="dropdown1">Staff:</label>
@@ -948,7 +945,10 @@ export default function Home() {
           
           <div style={{ textAlign: 'center' }}>
   <p>It appears that you might be under the legal drinking age.</p>
-  <button className="btn btn-primary" onClick={() => setShowPopup(false)}>
+  <button className="btn btn-primary"  onClick={(e) => {
+          e.preventDefault(); 
+          setShowPopup(false);
+        }}>
     OK
   </button>
 </div>
