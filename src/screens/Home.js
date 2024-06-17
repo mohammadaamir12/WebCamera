@@ -398,7 +398,7 @@ export default function Home() {
 
         })
         .catch(function (error) {
-          console.error('error', error);
+          // console.error('error', error);
           toast('Failed to verify', {
             autoClose: 500,
             hideProgressBar: true
@@ -457,6 +457,13 @@ export default function Home() {
           hideProgressBar: true
         })
         setLoading3(false)
+        setUrl('')
+        setPeople('')
+        setName('')
+        setCustomerId('False')
+        setCustomerType('')
+        setPhoneNumber('')
+
         console.log(response.data);
 
       })
