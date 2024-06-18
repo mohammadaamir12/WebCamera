@@ -360,6 +360,7 @@ export default function Home() {
     const branch = localStorage.getItem('branch_id');
     const property = localStorage.getItem('property_folder');
     const image = localStorage.getItem('image_path');
+    console.log(customerId,phoneNumber,url,name);
     if (!name && !phoneNumber && !customerId && !url) {
       toast('First Capture Image and Enter details', {
         autoClose: 500,
@@ -383,7 +384,9 @@ export default function Home() {
 
       },
         {
-          headers: { 'Content-Type': 'application/json' }
+          headers: { 'Content-Type': 'application/json', },
+          withCredentials: true
+          
         })
         .then(function (response) {
           toast('Visit Started', {
