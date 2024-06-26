@@ -144,7 +144,6 @@ export default function Home() {
   const [showFields, setShowFields] = useState(true);
   const [name, setName] = useState('');
   const [nameError, setNameError] = useState(false)
-  const [customerId, setCustomerId] = useState('False');
   const [customerType, setCustomerType] = useState('');
   const [phoneNumber, setPhoneNumber] = useState('');
   const [showCustomer, setShowCustomer] = useState(false)
@@ -164,7 +163,7 @@ export default function Home() {
     if (!token) {
       navigate('/')
     }
-
+   console.log("hello",process.env);
   }, [])
 
   useEffect(() => {
@@ -211,6 +210,9 @@ export default function Home() {
     localStorage.removeItem('property_folder');
     localStorage.removeItem('phone_no');
     localStorage.removeItem('image_path');
+    localStorage.removeItem('face_id')
+    localStorage.removeItem('cus_id') 
+    localStorage.removeItem('recog')
     setUrl('')
 
   }
@@ -312,7 +314,13 @@ export default function Home() {
         if (response.data.message.recognition == 'Person not recognized') {
           console.log('Done', response.data);
           const path = response.data.message.image_path;
+          const cus_id=response.data.message.customer_id;
+          const face_id=response.data.message.face_id;
+          const recoz='Person not recognized'
+          localStorage.setItem('recog', recoz)
           localStorage.setItem('image_path', path)
+          localStorage.setItem('face_id', face_id)
+          localStorage.setItem('cus_id', cus_id)
           toast("Image upload successful", {
             autoClose: 500,
             hideProgressBar: true
@@ -323,14 +331,19 @@ export default function Home() {
         // console.log(response.data.message.face_features.age_range[0],'ttttttttttttt');
         if (response.data.message.recognition == 'Person recognized') {
             const path = response.data.message.image_path;
-          localStorage.setItem('image_path', path)
+            const cus_id=response.data.message.customer_id;
+            const face_id=response.data.message.face_id;
+            const recoz='Person recognized'
+            localStorage.setItem('image_path', path)
+            localStorage.setItem('face_id', face_id)
+            localStorage.setItem('cus_id', cus_id) 
+            localStorage.setItem('recog', recoz)
           toast("Image recognize successfully", {
             autoClose: 500,
             hideProgressBar: true
           });
           console.log(response.data);
           setName(response.data.message.name)
-          setCustomerId(response.data.message.customer_id)
           setCustomerType(response.data.message.customer_type)
           setPhoneNumber(response.data.message.phone)
           setLoading(false)
@@ -360,8 +373,11 @@ export default function Home() {
     const branch = localStorage.getItem('branch_id');
     const property = localStorage.getItem('property_folder');
     const image = localStorage.getItem('image_path');
-    console.log(customerId,phoneNumber,url,name);
-    if (!name && !phoneNumber && !customerId && !url) {
+    const cus_id=localStorage.getItem('cus_id');
+    const face_id=localStorage.getItem('face_id');
+    const recognize=localStorage.getItem('recog');
+    console.log(phoneNumber,url,name);
+    if (!name && !phoneNumber && !url) {
       toast('First Capture Image and Enter details', {
         autoClose: 500,
         hideProgressBar: true
@@ -376,14 +392,16 @@ export default function Home() {
 
         branch_id: branch,
         property_folder: property,
-        customer_id: customerId,
         customer_name: name,
         phone: phoneNumber,
         image_path: image,
-        party_size: people
-
+        party_size: people,
+        cus_id: cus_id,
+        face_id: face_id,
+        recognition: recognize
       },
         {
+         
           headers: { 'Content-Type': 'application/json', },
           withCredentials: true
           
@@ -438,7 +456,6 @@ export default function Home() {
     setShowCustomer(false)
     setShowFields(true)
     setName('')
-    setCustomerId('False')
     setPhoneNumber('')
     setUrl('')
     setDropdown1('')
@@ -463,7 +480,6 @@ export default function Home() {
         setUrl('')
         setPeople('')
         setName('')
-        setCustomerId('False')
         setCustomerType('')
         setPhoneNumber('')
 
