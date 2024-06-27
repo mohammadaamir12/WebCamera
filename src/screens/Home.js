@@ -396,7 +396,7 @@ export default function Home() {
         phone: phoneNumber,
         image_path: image,
         party_size: people,
-        cus_id: cus_id,
+        customer_id: cus_id,
         face_id: face_id,
         recognition: recognize
       },
