@@ -283,7 +283,7 @@ export default function Home() {
     }
 
     const randomFilename = `Molecule${generateRandomString(7)}.jpg`;
-
+    console.log(url);
     if (url) {
       const binaryString = atob(url.split(',')[1]);
       const len = binaryString.length;
@@ -338,7 +338,7 @@ export default function Home() {
             localStorage.setItem('face_id', face_id)
             localStorage.setItem('cus_id', cus_id) 
             localStorage.setItem('recog', recoz)
-          toast("Image recognize successfully", {
+          toast("Welcome, You are valueable", {
             autoClose: 500,
             hideProgressBar: true
           });
