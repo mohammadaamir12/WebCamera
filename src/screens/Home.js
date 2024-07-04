@@ -74,7 +74,7 @@ const Wrapper = styled.div`
   transition: filter 0.3s ease;
   `;
 
-  const Overlay = styled.div`
+const Overlay = styled.div`
   position: fixed;
   top: 0;
   left: 0;
@@ -153,17 +153,17 @@ export default function Home() {
   const [url, setUrl] = useState(null)
   const [table, settable] = useState([])
   const [people, setPeople] = useState('')
-  const [showPopup,setShowPopup]=useState(false)
-  const [loading,setLoading]=useState(false)
-  const [loading2,setLoading2]=useState(false)
-  const [loading3,setLoading3]=useState(false)
+  const [showPopup, setShowPopup] = useState(false)
+  const [loading, setLoading] = useState(false)
+  const [loading2, setLoading2] = useState(false)
+  const [loading3, setLoading3] = useState(false)
 
   useEffect(() => {
     const token = localStorage.getItem('token');
     if (!token) {
       navigate('/')
     }
-   console.log("hello",process.env);
+    console.log("hello", process.env);
   }, [])
 
   useEffect(() => {
@@ -172,12 +172,12 @@ export default function Home() {
 
   useEffect(() => {
     const intervalId = setInterval(() => {
-        const refreshToken = localStorage.getItem('refresh_token');
-        refreshTokens(refreshToken);
-        // console.log("i am calling");
+      const refreshToken = localStorage.getItem('refresh_token');
+      refreshTokens(refreshToken);
+      // console.log("i am calling");
     }, 3550000);
     return () => clearInterval(intervalId);
-}, []);
+  }, []);
 
 
   const refreshTokens = (refreshToken) => {
@@ -211,44 +211,12 @@ export default function Home() {
     localStorage.removeItem('phone_no');
     localStorage.removeItem('image_path');
     localStorage.removeItem('face_id')
-    localStorage.removeItem('cus_id') 
+    localStorage.removeItem('cus_id')
     localStorage.removeItem('recog')
     setUrl('')
 
   }
 
-  // const containerStyle = {
-  //   width:'100%',
-  //   backgroundColor: '#ebf0f5',
-  //   padding: '20px',
-  //   borderRadius: '8px',
-  //   justifyContent:'center',
-  //   alignItems:'center'
-
-  // };
-
-  // const boxStyle = {
-  //   height: '100px',
-  //   backgroundColor: '#bfd1e3',
-  //   display: 'flex',
-  //   alignItems: 'center',
-  //   justifyContent: 'center',
-  //   border: '1px solid #84a2bf',
-  //   borderRadius: '4px',
-  //   fontSize: '14px',
-  // }
-
-  // const rows = Array.from({ length: 4 }, (_, rowIndex) => (
-  //   <div className="row mb-2" key={rowIndex}>
-  //     {Array.from({ length: 6 }, (_, colIndex) => (
-  //       <div className="col-md-2 mb-2" key={colIndex}>
-  //         <div style={boxStyle}>
-  //           Box {rowIndex * 6 + colIndex + 1}
-  //         </div>
-  //       </div>
-  //     ))}
-  //   </div>
-  // ));
 
   const capturePhoto = useCallback(async () => {
     const imageSrc = webCamRef.current.getScreenshot()
@@ -259,15 +227,11 @@ export default function Home() {
     console.log(e);
   }
 
-  // useEffect(() => {
-  //   if (url) {
-
-  //     apiDataCall();
-  //   }
-  // }, [url]);
+  
 
 
   const apiDataCall = () => {
+    console.log('entered');
     setLoading(true)
     const propertyFolder = localStorage.getItem('property_folder');
     const token = localStorage.getItem('token');
@@ -309,53 +273,54 @@ export default function Home() {
         },
         data: bytes.buffer,
       }).then(response => {
-        if(response.data.message.face_features.age_range[0]>21){
-          
-        if (response.data.message.recognition == 'Person not recognized') {
-          console.log('Done', response.data);
-          const path = response.data.message.image_path;
-          const cus_id=response.data.message.customer_id;
-          const face_id=response.data.message.face_id;
-          const recoz='Person not recognized'
-          localStorage.setItem('recog', recoz)
-          localStorage.setItem('image_path', path)
-          localStorage.setItem('face_id', face_id)
-          localStorage.setItem('cus_id', cus_id)
-          toast("Image upload successful", {
-            autoClose: 500,
-            hideProgressBar: true
-          });
-          setShowFields(true)
-          setLoading(false)
-        }
-        // console.log(response.data.message.face_features.age_range[0],'ttttttttttttt');
-        if (response.data.message.recognition == 'Person recognized') {
+        console.log('yyyyyyyy',response.data);
+        if (response.data.message.face_features.age_range[0] > 21) {
+
+          if (response.data.message.recognition == 'Person not recognized') {
+            console.log('Done', response.data);
             const path = response.data.message.image_path;
-            const cus_id=response.data.message.customer_id;
-            const face_id=response.data.message.face_id;
-            const recoz='Person recognized'
+            const cus_id = response.data.message.customer_id;
+            const face_id = response.data.message.face_id;
+            const recoz = 'Person not recognized'
+            localStorage.setItem('recog', recoz)
             localStorage.setItem('image_path', path)
             localStorage.setItem('face_id', face_id)
-            localStorage.setItem('cus_id', cus_id) 
+            localStorage.setItem('cus_id', cus_id)
+            toast("Image upload successful", {
+              autoClose: 500,
+              hideProgressBar: true
+            });
+            setShowFields(true)
+            setLoading(false)
+          }
+          // console.log(response.data.message.face_features.age_range[0],'ttttttttttttt');
+          if (response.data.message.recognition == 'Person recognized') {
+            const path = response.data.message.image_path;
+            const cus_id = response.data.message.customer_id;
+            const face_id = response.data.message.face_id;
+            const recoz = 'Person recognized'
+            localStorage.setItem('image_path', path)
+            localStorage.setItem('face_id', face_id)
+            localStorage.setItem('cus_id', cus_id)
             localStorage.setItem('recog', recoz)
-          toast("Welcome, You are valueable", {
-            autoClose: 500,
-            hideProgressBar: true
-          });
-          console.log(response.data);
-          setName(response.data.message.name)
-          setCustomerType(response.data.message.customer_type)
-          setPhoneNumber(response.data.message.phone)
+            toast("You are valueable customer", {
+              autoClose: 500,
+              hideProgressBar: true
+            });
+            console.log(response.data);
+            setName(response.data.message.name)
+            setCustomerType(response.data.message.customer_type)
+            setPhoneNumber(response.data.message.phone)
+            setLoading(false)
+          }
+        } else {
           setLoading(false)
-        }
-      } else{
-        setLoading(false)
-        setShowPopup(true)  
+          setShowPopup(true)
 
-      }
-        
+        }
+
         // console.log('Image upload successful:', response.data);
-       }).catch(error => {
+      }).catch(error => {
         console.error('Error uploading image:', error);
         toast('Error Uploading Image', {
           autoClose: 500,
@@ -373,38 +338,82 @@ export default function Home() {
     const branch = localStorage.getItem('branch_id');
     const property = localStorage.getItem('property_folder');
     const image = localStorage.getItem('image_path');
-    const cus_id=localStorage.getItem('cus_id');
-    const face_id=localStorage.getItem('face_id');
-    const recognize=localStorage.getItem('recog');
-    console.log(phoneNumber,url,name);
-    if (!name && !phoneNumber && !url) {
-      toast('First Capture Image and Enter details', {
+    const cus_id = localStorage.getItem('cus_id');
+    const face_id = localStorage.getItem('face_id');
+    const recognize = localStorage.getItem('recog');
+    // console.log(phoneNumber,url,name);
+    //   console.log(branch, property, image);
+    if(!name || !phoneNumber || !people){
+      toast('Please fill all fields', {
         autoClose: 500,
-        hideProgressBar: true
-      });
+        hideProgressBar: true,
+      })
       setLoading2(false)
-      return;
-    }
+    }else{
+    if(url){
+    axios.post(VISITSTART, {
 
-    else {
-      console.log(branch, property, image);
+      branch_id: branch,
+      property_folder: property,
+      customer_name: name,
+      phone: phoneNumber,
+      image_path: image,
+      party_size: people,
+      customer_id: cus_id,
+      face_id: face_id,
+      recognition: recognize,
+      table_id:'False',
+      table_number:'False',
+      staff_id:'False'
+    },
+      {
+
+        headers: { 'Content-Type': 'application/json', },
+        // withCredentials: true
+
+      })
+      .then(function (response) {
+        toast('Visit Started', {
+          autoClose: 500,
+          hideProgressBar: true,
+        })
+        setLoading2(false)
+        // console.log('data', response.data);
+        // setShowFields(false)
+        // setShowCustomer(true)
+
+
+      })
+      .catch(function (error) {
+        // console.error('error', error);
+        toast('Failed to verify', {
+          autoClose: 500,
+          hideProgressBar: true
+        })
+        setLoading2(false)
+
+      });
+    }else{
       axios.post(VISITSTART, {
 
         branch_id: branch,
         property_folder: property,
         customer_name: name,
         phone: phoneNumber,
-        image_path: image,
+        image_path: 'False',
         party_size: people,
-        customer_id: cus_id,
-        face_id: face_id,
-        recognition: recognize
+        customer_id: 'False',
+        face_id: 'False',
+        recognition: recognize,
+        table_id:'False',
+        table_number:'False',
+        staff_id:'False'
       },
         {
-         
+  
           headers: { 'Content-Type': 'application/json', },
-          withCredentials: true
-          
+          // withCredentials: true
+  
         })
         .then(function (response) {
           toast('Visit Started', {
@@ -412,23 +421,23 @@ export default function Home() {
             hideProgressBar: true,
           })
           setLoading2(false)
-          console.log('data', response.data);
-          setShowFields(false)
-          setShowCustomer(true)
-
-
+          // console.log('data', response.data);
+          // setShowFields(false)
+          // setShowCustomer(true)
+  
+  
         })
         .catch(function (error) {
-          // console.error('error', error);
+          console.error('error', error.response);
           toast('Failed to verify', {
             autoClose: 500,
             hideProgressBar: true
           })
           setLoading2(false)
-
+  
         });
-
     }
+  }
   }
 
   const vacantSeat = () => {
@@ -494,7 +503,7 @@ export default function Home() {
         })
         setLoading3(false)
       }).finally(() => {
-      setLoading3(false)
+        setLoading3(false)
       });
   }
 
@@ -506,482 +515,283 @@ export default function Home() {
     acc + staff.tables.filter(table => table.table_status === 'false').length
   ), 0);
 
+  const handleAllClear=()=>{
+    setName('')
+    setPhoneNumber('')
+    setPeople('')
+    setUrl('')
+  }
+
   return (
     <>
-    <div>
-       <Wrapper blur={showPopup}>
-      <div className="container">
+      <div>
+        <Wrapper blur={showPopup}>
+          <div className="container">
 
-        <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', marginTop: '2%' }}>
-          <h2 style={{
-            fontFamily: "'Roboto', sans-serif",
-            fontWeight: 700,
-            color: '#007bff',
-            textShadow: '2px 2px 4px rgba(0, 0, 0, 0.1)',
-            letterSpacing: '1px',
-          }}>Welcome to Reception</h2>
-          <button onClick={logoutPage} style={{ backgroundColor: '#007bff', border: 'none', borderRadius: 8, padding: 7, color: 'white', position: 'absolute', right: 20 }}>Logout</button>
-        </div>
-
-        {/* <heading2 className="mb-2 mt-2"
-        >Smile Please</heading2> */}
-
-        <div className="row">
-          <div style={{ justifyContent: 'space-between', display: 'flex', marginTop: '3%' }}>
-            <StyledBox>
-              <Heading1>Customer Verify</Heading1>
-             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', marginTop: '3%' }}>
-  <div style={{ width: '85%', height: '60%', display: 'flex', justifyContent: 'center' }}>
-    <Webcam
-      style={{ width: '90%', height: '90%', borderRadius: 50 }}
-      audio={false}
-      ref={webCamRef}
-      screenshotFormat="image/jpeg"
-      videoConstraints={videoConstraints}
-      onUserMedia={onUsermedia}
-      mirrored={true}
-    />
-  </div>
-  <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-    {url && (
-      <div style={{ width: '80%', height: '60%',}}>
-        <img src={url} alt="Screenshot" className="img-fluid" style={{ borderRadius: 30 }} />
-      </div>
-    )}
-  </div>
-</div>
-              <div className="row" style={{ marginTop: '3%',marginBottom:'3%',alignItems:'center',justifyContent:'center' }}>
-                <div className="col-md-6 d-flex justify-content-between align-items-center">
-                  <button className="btn btn-primary" style={{flex:1,marginRight:3  }} onClick={capturePhoto}>
-                    Capture
-                  </button>
-                  <button className="btn btn-primary" style={{ flex:1,marginLeft:3,position: 'relative' }} onClick={handleRefresh} disabled={loading}>
-                    Submit
-                    {loading && (
-            <div style={{
-                width: '20px',
-                height: '20px',
-                border: '3px solid #f3f3f3', /* Light grey */
-                borderTop: '3px solid #3498db', /* Blue */
-                borderRadius: '50%',
-                position: 'absolute',
-                top: '50%',
-                left: '50%',
-                marginTop: '-10px',
-                marginLeft: '-10px',
-                animation: 'spin 1s linear infinite' /* Add spinning animation */
-            }}></div>
-        )}
-                  </button>
-                  <style>
-        {`
-            @keyframes spin {
-                0% { transform: rotate(0deg); }
-                100% { transform: rotate(360deg); }
-            }
-        `}
-    </style>
-                </div>
-              </div>
-              {/* <div className="row">
-    <div className="col-md-3">
-      <div className="row">
-        <div className="col-auto">
-          <Webcam
-            style={{ width: '100%', height: '100%', borderRadius: 50 }}
-            audio={false}
-            ref={webCamRef}
-            screenshotFormat="image/jpeg"
-            videoConstraints={videoConstraints}
-            onUserMedia={onUsermedia}
-            mirrored={true}
-          />
-        </div>
-      </div>
-      <div className="row">
-        <div className="col-md-6 d-flex justify-content-between align-items-center">
-          <button className="btn btn-primary mr-md-3" style={{ margin: 20 }} onClick={capturePhoto}>
-            Capture
-          </button>
-          <button className="btn btn-primary" onClick={handleRefresh}>
-            Submit
-          </button>
-        </div>
-      </div>
-    </div>
-    {url && (
-      <div className="col-md-2" style={{ width: '20%', height: '20%', marginTop: '2.5%' }}>
-        <img src={url} alt="Screenshot" className="img-fluid" style={{ borderRadius: 30 }} />
-      </div>
-    )}
-  </div> */}
-            </StyledBox>
-            <div className="col-md-1" style={{ justifyContent: 'center', alignItems: 'center', }}>
-              <div style={{ borderLeft: '1px solid #000', height: '100%', marginLeft: '50%' }}></div>
-            </div>
-
-           <StyledBox1>
-            
-  <div style={{display:'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', padding: '0 2%' }}>
-  <h2 style={{
-        fontFamily: "'Roboto', sans-serif",
-        fontWeight: 700,
-        color: '#007bff',
-        textShadow: '2px 2px 4px rgba(0, 0, 0, 0.1)',
-        letterSpacing: '0px', marginTop: '4%'
-      }}>Customer Details</h2>
-      <h4>Customer Type: {customerType}</h4>
-    {/* Left Side: URL */}
-   
-
-    {/* Right Side: Form */}
-   
-  </div>
-  <div className="form-container md-5" style={{  }}>
-    
-    <form >
-      <div className="form-group">
-        <label htmlFor="name">Name:</label>
-        <input
-          type="text"
-          id="name"
-          name="name"
-          className="form-control"
-          value={name}
-          onChange={(e) => setName(e.target.value)}
-          required
-        />
-      </div>
-      <div className="form-group">
-        <label htmlFor="customerId">Customer Phone:</label>
-        <input
-          type="text"
-          id="customerId"
-          name="customerId"
-          className="form-control"
-          value={phoneNumber}
-          onChange={(e) => setPhoneNumber(e.target.value)}
-          required
-        />
-      </div>
-      <div className="form-group">
-        <label htmlFor="customerId">Number of People:</label>
-        <input
-          type="text"
-          id="customerId"
-          name="customerId"
-          className="form-control"
-          value={people}
-          onChange={(e) => setPeople(e.target.value)}
-          required
-        />
-      </div>
-      <div className="text-center">
-        <button className="btn btn-primary mt-4" style={{ position: 'relative' }} onClick={handleSubmit} disabled={loading2}>
-                   Add Visit
-                    {loading2 && (
-            <div style={{
-                width: '20px',
-                height: '20px',
-                border: '3px solid #f3f3f3', /* Light grey */
-                borderTop: '3px solid #3498db', /* Blue */
-                borderRadius: '50%',
-                position: 'absolute',
-                top: '50%',
-                left: '50%',
-                marginTop: '-10px',
-                marginLeft: '-10px',
-                animation: 'spin 1s linear infinite' /* Add spinning animation */
-            }}></div>
-        )}
-                  </button>
-                  <style>
-        {`
-            @keyframes spin {
-                0% { transform: rotate(0deg); }
-                100% { transform: rotate(360deg); }
-            }
-        `}
-    </style>
-      </div>
-    </form>
-  </div>
-
-  {/* Showing Customer */}
-  {showCustomer && (
-    <div>
-      <div style={{ display: 'flex', justifyContent: "space-between", }}>
-        <div className="form-group">
-          <label htmlFor="dropdown1">Staff:</label>
-          <select
-            id="dropdown1"
-            name="dropdown1"
-            className="form-control"
-            value={dropdown1}
-            onChange={(e) => setDropdown1(e.target.value)}
-          >
-            <option value="">Select an option</option>
-            <option value="option1">1</option>
-            <option value="option2">2</option>
-          </select>
-        </div>
-        <div className="form-group">
-          <label htmlFor="dropdown2">Table:</label>
-          <select
-            id="dropdown2"
-            name="dropdown2"
-            className="form-control"
-            value={dropdown2}
-            onChange={(e) => setDropdown2(e.target.value)}
-          >
-            <option value="">Select an option</option>
-            <option value="option1">1</option>
-            <option value="option2">2</option>
-          </select>
-        </div>
-      </div>
-      <div style={{ display: 'flex', justifyContent: "center", marginTop: '20px' }}>
-        <div className="text-center">
-          <button className="btn btn-primary mx-2" style={{position: 'relative' }} onClick={afterVisit} disabled={loading3}>
-                    Submit
-                    {loading3 && (
-            <div style={{
-                width: '20px',
-                height: '20px',
-                border: '3px solid #f3f3f3', /* Light grey */
-                borderTop: '3px solid #3498db', /* Blue */
-                borderRadius: '50%',
-                position: 'absolute',
-                top: '50%',
-                left: '50%',
-                marginTop: '-10px',
-                marginLeft: '-10px',
-                animation: 'spin 1s linear infinite' /* Add spinning animation */
-            }}></div>
-        )}
-                  </button>
-                  <style>
-        {`
-            @keyframes spin {
-                0% { transform: rotate(0deg); }
-                100% { transform: rotate(360deg); }
-            }
-        `}
-    </style>
-        </div>
-        <div className="text-center">
-          <button onClick={onSkip} type="button" className="btn btn-primary mx-2">
-            Skip
-          </button>
-        </div>
-      </div>
-    </div>
-  )}
-</StyledBox1>
-
-          </div>
-
-          {/* <div className="col-md-1" style={{ borderLeft: '1px solid #000', height: '100%', margin: '0 auto' }}></div> */}
-
-
-
-          {/* <div style={{
-            display: 'flex',
-            flexWrap: 'wrap',
-            gap: '20px', marginTop: 20
-          }}>
-            {table.map((item, index) => (
-              <div key={index} style={{
-                border: '1px solid #ccc',
-                padding: '20px',
-                borderRadius: '8px',
-                boxShadow: '0 0 10px rgba(0, 0, 0, 0.1)',
-                width: '300px',
-                marginBottom:5
-              }}>
-                <p>Staff Name:- {item.name}</p>
-                <p>Staff ID:- {item.staffid}</p>
-                {item.tables.map((table, idx) => (
-                  <div key={idx} style={{
-                    border: '1px solid #ccc',
-                    padding: '10px',
-                    borderRadius: '8px',
-                    boxShadow: '0 0 5px rgba(0, 0, 0, 0.1)',
-                    width: '100px',
-                    backgroundColor:table.table_status=='true'?'#cafad3':'#fc5858',
-                    margin:5
-                    
-                  }}>
-                    <p style={{
-                      margin: '0',
-                      fontWeight: 'bold',
-                      textAlign: 'center'
-                      
-                    }}>{table.table_status=='true'?'Vacant':'Booked'}</p>
-                    <p style={{
-                      margin: '0',
-                      fontWeight: 'bold',
-                      textAlign:'center'
-                    }}>{table.table_number}</p>
-                  </div>
-                ))}
-              </div>
-            ))}
-          </div> */}
-          {/* <div style={{ display: 'flex',
-    flexDirection: 'column',
-    gap: '20px',}}>
-      {table.map((staff, index) => (
-        <div key={index} style={{padding: '10px',
-        border: '1px solid #ccc',
-        borderRadius: '5px',}}>
-          <h3>{staff.name}</h3>
-          <div style={{display: 'flex',
-    flexWrap: 'wrap',
-    gap: '10px',
-    marginTop: '10px',}}>
-            {staff.tables.map((table) => (
-              <div key={table.id} style={{ width: '40px',
-              height: '40px',
-              display: 'flex',
-              justifyContent: 'center',
-              alignItems: 'center',
-              border: '1px solid #ccc',
-              borderRadius: '5px',
-              backgroundColor: '#f0f0f0',}}>
-                {table.table_number}
-              </div>
-            ))}
-          </div>
-        </div>
-      ))}
-    </div> */}
-          <div style={{
-            border: '1px solid #ccc',
-            borderRadius: '5px',
-            backgroundColor: '#FFFFFF',
-            marginTop: 15,
-            marginBottom: 10
-          }}>
-            <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', justifyContent: 'center', marginTop: 5 }}>
-              <p style={{
-                marginRight: 20, fontFamily: "'Roboto', sans-serif",
-                fontWeight: 700,
-                color: '#fc5f51',
-                textShadow: '2px 2px 4px rgba(0, 0, 0, 0.1)',
-                letterSpacing: '0px'
-              }}>Booked: {trueCount}</p>
-              <p style={{
+            <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', marginTop: '2%' }}>
+              <h2 style={{
                 fontFamily: "'Roboto', sans-serif",
                 fontWeight: 700,
-                color: '#a9f5bd',
+                color: '#007bff',
                 textShadow: '2px 2px 4px rgba(0, 0, 0, 0.1)',
-                letterSpacing: '0px'
-              }}>Vacant: {falseCount}</p>
+                letterSpacing: '1px',
+              }}>Welcome to Reception</h2>
+              <button onClick={logoutPage} style={{ backgroundColor: '#007bff', border: 'none', borderRadius: 8, padding: 7, color: 'white', position: 'absolute', right: 20 }}>Logout</button>
             </div>
-            <div style={{
-              display: 'flex',
-              justifyContent: 'center',
-              alignItems: 'center',
-            }}>
-              <div style={{
-                display: 'grid',
-                gridTemplateColumns: 'repeat(8, 1fr)',
-                marginBottom: '10px',
-                gap: '10px',
-                padding: '10px',
-                backgroundColor: '#FFFFFF',
-                height: '200px',
-                overflowY: 'auto',
-              }}>
 
-                {table.map((staff) =>
 
-                  staff.tables.map((table) => (
-                    <div key={table.id} style={{
-                      width: '120px',  // Increase size
-                      height: '80px', // Increase size
-                      justifyContent: 'center',
-                      alignItems: 'center',
-                      border: '1px solid #ccc',
-                      borderRadius: '5px',
-                      backgroundColor: table.table_status == 'true' ? '#fc5f51' : '#a9f5bd',
-                      fontSize: '20px',
-                    }}>
-                      <p style={{
-                        margin: '0',
-                        fontWeight: 'bold',
-                        textAlign: 'center'
-                      }}> {table.table_number}</p>
-                      <p style={{
-                        margin: '0',
-
-                        textAlign: 'center'
-                      }}> {table.table_status == 'true' ? 'Booked' : 'Vacant'}</p>
+            <div className="row">
+              <div style={{ justifyContent: 'space-between', display: 'flex', marginTop: '3%' }}>
+                <StyledBox>
+                  <Heading1>Customer Verify</Heading1>
+                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', marginTop: '3%' }}>
+                    <div style={{ width: '85%', height: '60%', display: 'flex', justifyContent: 'center' }}>
+                      <Webcam
+                        style={{ width: '90%', height: '90%', borderRadius: 50 }}
+                        audio={false}
+                        ref={webCamRef}
+                        screenshotFormat="image/jpeg"
+                        videoConstraints={videoConstraints}
+                        onUserMedia={onUsermedia}
+                        mirrored={true}
+                      />
                     </div>
-                  ))
-                )}
+                    <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+                      {url && (
+                        <div style={{ width: '80%', height: '60%', }}>
+                          <img src={url} alt="Screenshot" className="img-fluid" style={{ borderRadius: 30 }} />
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                  <div className="row" style={{ marginTop: '3%', marginBottom: '3%', alignItems: 'center', justifyContent: 'center' }}>
+                    <div className="col-md-6 d-flex justify-content-between align-items-center">
+                      <button className="btn btn-primary" style={{ flex: 1, marginRight: 3 }} onClick={capturePhoto}>
+                        Capture
+                      </button>
+                      <button className="btn btn-primary" style={{ flex: 1, marginLeft: 3, position: 'relative' }} onClick={handleRefresh} disabled={loading}>
+                        Submit
+                        {loading && (
+                          <div style={{
+                            width: '20px',
+                            height: '20px',
+                            border: '3px solid #f3f3f3', /* Light grey */
+                            borderTop: '3px solid #3498db', /* Blue */
+                            borderRadius: '50%',
+                            position: 'absolute',
+                            top: '50%',
+                            left: '50%',
+                            marginTop: '-10px',
+                            marginLeft: '-10px',
+                            animation: 'spin 1s linear infinite' /* Add spinning animation */
+                          }}></div>
+                        )}
+                      </button>
+                      <style>
+                        {`
+            @keyframes spin {
+                0% { transform: rotate(0deg); }
+                100% { transform: rotate(360deg); }
+            }
+        `}
+                      </style>
+                    </div>
+                  </div>
+  
+                </StyledBox>
+                <div className="col-md-1" style={{ justifyContent: 'center', alignItems: 'center', }}>
+                  <div style={{ borderLeft: '1px solid #000', height: '100%', marginLeft: '50%' }}></div>
+                </div>
 
-                {/* <div>
-    <p>Total True: {trueCount}</p>
-    <p>Total False: {falseCount}</p>
-    {table.map((staff) => (
-      <div key={staff.staffid}>
-        <div style={{ display: 'flex', flexWrap: 'wrap' }}>
-          {staff.tables.map((table) => (
-            <div
-              key={table.id}
-              style={{
-                width: '120px',
-                height: '80px',
-                justifyContent: 'center',
-                alignItems: 'center',
+                <StyledBox1>
+
+                  <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', padding: '0 2%' }}>
+                    <h2 style={{
+                      fontFamily: "'Roboto', sans-serif",
+                      fontWeight: 700,
+                      color: '#007bff',
+                      textShadow: '2px 2px 4px rgba(0, 0, 0, 0.1)',
+                      letterSpacing: '0px', marginTop: '4%'
+                    }}>Customer Details</h2>
+                    <h4>Customer Type: {customerType}</h4>
+                    {/* Left Side: URL */}
+
+
+                    {/* Right Side: Form */}
+
+                  </div>
+                  <div className="form-container md-5" style={{}}>
+
+                    <form >
+                      <div className="form-group">
+                        <label htmlFor="name">Name:</label>
+                        <input
+                          type="text"
+                          id="name"
+                          name="name"
+                          className="form-control"
+                          value={name}
+                          onChange={(e) => setName(e.target.value)}
+                          required
+                        />
+                      </div>
+                      <div className="form-group">
+                        <label htmlFor="customerId">Customer Phone:</label>
+                        <input
+                          type="text"
+                          id="customerId"
+                          name="customerId"
+                          className="form-control"
+                          value={phoneNumber}
+                          onChange={(e) => setPhoneNumber(e.target.value)}
+                          required
+                        />
+                      </div>
+                      <div className="form-group">
+                        <label htmlFor="customerId">Number of People:</label>
+                        <input
+                          type="text"
+                          id="customerId"
+                          name="customerId"
+                          className="form-control"
+                          value={people}
+                          onChange={(e) => setPeople(e.target.value)}
+                          required
+                        />
+                      </div>
+                      <div className="text-center">
+                        <button className="btn btn-primary mt-4" style={{ position: 'relative' }} onClick={handleSubmit} disabled={loading2}>
+                          Add Visit
+                          {loading2 && (
+                            <div style={{
+                              width: '20px',
+                              height: '20px',
+                              border: '3px solid #f3f3f3', /* Light grey */
+                              borderTop: '3px solid #3498db', /* Blue */
+                              borderRadius: '50%',
+                              position: 'absolute',
+                              top: '50%',
+                              left: '50%',
+                              marginTop: '-10px',
+                              marginLeft: '-10px',
+                              animation: 'spin 1s linear infinite' /* Add spinning animation */
+                            }}></div>
+                          )}
+                        </button>
+                        <style>
+                          {`
+            @keyframes spin {
+                0% { transform: rotate(0deg); }
+                100% { transform: rotate(360deg); }
+            }
+        `}
+                        </style>
+                        <button className="btn btn-primary mt-4 " style={{marginLeft:5}} onClick={handleAllClear}>
+                          Refresh
+                        </button>
+                      </div>
+                    </form>
+                  </div>
+
+
+                </StyledBox1>
+
+              </div>
+
+              <div style={{
                 border: '1px solid #ccc',
                 borderRadius: '5px',
-                backgroundColor: table.table_status === 'true' ? '#a9f5bd' : '#fc5f51',
-                fontSize: '20px',
-                margin: '5px',
-              }}
-            >
-              <p style={{ margin: '0', fontWeight: 'bold', textAlign: 'center' }}>
-                {table.table_number}
-              </p>
-              <p style={{ margin: '0', textAlign: 'center' }}>
-                {table.table_status === 'true' ? 'Vacant' : 'Booked'}
-              </p>
-            </div>
-          ))}
-        </div>
-      </div>
-    ))}
-  </div> */}
+                backgroundColor: '#FFFFFF',
+                marginTop: 15,
+                marginBottom: 10
+              }}>
+                <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', justifyContent: 'center', marginTop: 5 }}>
+                  <p style={{
+                    marginRight: 20, fontFamily: "'Roboto', sans-serif",
+                    fontWeight: 700,
+                    color: '#fc5f51',
+                    textShadow: '2px 2px 4px rgba(0, 0, 0, 0.1)',
+                    letterSpacing: '0px'
+                  }}>Booked: {trueCount}</p>
+                  <p style={{
+                    fontFamily: "'Roboto', sans-serif",
+                    fontWeight: 700,
+                    color: '#a9f5bd',
+                    textShadow: '2px 2px 4px rgba(0, 0, 0, 0.1)',
+                    letterSpacing: '0px'
+                  }}>Vacant: {falseCount}</p>
+                </div>
+                <div style={{
+                  display: 'flex',
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                }}>
+                  <div style={{
+                    display: 'grid',
+                    gridTemplateColumns: 'repeat(8, 1fr)',
+                    marginBottom: '10px',
+                    gap: '10px',
+                    padding: '10px',
+                    backgroundColor: '#FFFFFF',
+                    height: '200px',
+                    overflowY: 'auto',
+                  }}>
+
+                    {table.map((staff) =>
+
+                      staff.tables.map((table) => (
+                        <div key={table.id} style={{
+                          width: '120px',  // Increase size
+                          height: '80px', // Increase size
+                          justifyContent: 'center',
+                          alignItems: 'center',
+                          border: '1px solid #ccc',
+                          borderRadius: '5px',
+                          backgroundColor: table.table_status == 'true' ? '#fc5f51' : '#a9f5bd',
+                          fontSize: '20px',
+                        }}>
+                          <p style={{
+                            margin: '0',
+                            fontWeight: 'bold',
+                            textAlign: 'center'
+                          }}> {table.table_number}</p>
+                          <p style={{
+                            margin: '0',
+
+                            textAlign: 'center'
+                          }}> {table.table_status == 'true' ? 'Booked' : 'Vacant'}</p>
+                        </div>
+                      ))
+                    )}
+
+                 
+                  </div>
+                </div>
               </div>
             </div>
-          </div>
-        </div>
-        {/* <h1 onClick={logoutPage}>Logout</h1> */}
+          
 
-        <ToastContainer
-        />
+            <ToastContainer
+            />
+          </div>
+        </Wrapper>
+        <Overlay show={showPopup} onClick={() => setShowPopup(false)} />
+        <PopupContainer show={showPopup}>
+          <AuthFormContainer>
+
+            <div style={{ textAlign: 'center' }}>
+              <p>It appears that you might be under the legal drinking age.</p>
+              <button className="btn btn-primary" onClick={(e) => {
+                e.preventDefault();
+                setShowPopup(false);
+              }}>
+                OK
+              </button>
+            </div>
+
+          </AuthFormContainer>
+        </PopupContainer>
       </div>
-      </Wrapper>
-       <Overlay show={showPopup} onClick={() =>setShowPopup(false)} />
-         <PopupContainer show={showPopup}>
-        <AuthFormContainer>
-          
-          <div style={{ textAlign: 'center' }}>
-  <p>It appears that you might be under the legal drinking age.</p>
-  <button className="btn btn-primary"  onClick={(e) => {
-          e.preventDefault(); 
-          setShowPopup(false);
-        }}>
-    OK
-  </button>
-</div>
-          
-        </AuthFormContainer>
-      </PopupContainer>
-</div>
 
     </>
 
